@@ -7,6 +7,7 @@ type AdminLoginPageProps = {
 export default async function AdminLoginPage({ searchParams }: AdminLoginPageProps) {
   const params = await searchParams;
   const hasError = params?.error === "invalid";
+  const isLocked = params?.error === "locked";
 
   return (
     <main className="admin-shell admin-login-shell">
@@ -29,7 +30,7 @@ export default async function AdminLoginPage({ searchParams }: AdminLoginPagePro
               type="password"
             />
           </label>
-          {hasError ? (
+          {hasError || isLocked ? (
             <p className="admin-error">The password was not accepted. Please try again.</p>
           ) : null}
           <button className="button button-primary" type="submit">

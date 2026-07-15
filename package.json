@@ -9,10 +9,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "node --test tests/rendered-html.test.mjs",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs tests/*.test.ts",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "db:setup:access-requests": "node scripts/setup-access-requests-db.mjs",
+    "db:setup:admin-auth": "node scripts/setup-admin-auth-db.mjs",
     "db:check:access-request": "node scripts/check-access-request.mjs"
   },
   "dependencies": {

@@ -5,6 +5,12 @@ import {
   createAdminSessionValue,
   verifyAdminPassword,
 } from "../admin-auth";
+import {
+  assertAdminLoginIsAllowed,
+  getLoginAttemptIdentifier,
+  recordFailedAdminLogin,
+  recordSuccessfulAdminLogin,
+} from "../admin-rate-limit";
 
 function readPassword(formData: FormData) {
   const value = formData.get("password");
@@ -14,10 +20,18 @@ function readPassword(formData: FormData) {
 export async function POST(request: Request) {
   const formData = await request.formData();
   const password = readPassword(formData);
+  const identifier = getLoginAttemptIdentifier(request);
+
+  if (!(await assertAdminLoginIsAllowed(identifier))) {
+    return NextResponse.redirect(new URL("/admin/requests?error=locked", request.url), 303);
+  }
 
   if (!verifyAdminPassword(password)) {
+    await recordFailedAdminLogin(identifier);
     return NextResponse.redirect(new URL("/admin/requests?error=invalid", request.url), 303);
   }
+
+  await recordSuccessfulAdminLogin(identifier);
 
   const response = NextResponse.redirect(new URL("/admin/requests/list", request.url), 303);
 

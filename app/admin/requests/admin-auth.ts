@@ -1,43 +1,20 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
+import {
+  ADMIN_COOKIE_MAX_AGE_SECONDS,
+  createAdminSessionValue as createSignedAdminSessionValue,
+  verifyAdminPassword as verifyPassword,
+  verifyAdminSessionValue,
+} from "./admin-session";
 
 export const ADMIN_COOKIE_NAME = "tokenapi_admin_session";
-export const ADMIN_COOKIE_MAX_AGE = 60 * 60 * 8;
-
-const SESSION_PAYLOAD = "tokenapi-admin";
-const PASSWORD_DIGEST_KEY = "tokenapi-admin-password";
+export const ADMIN_COOKIE_MAX_AGE = ADMIN_COOKIE_MAX_AGE_SECONDS;
 
 function getAdminPassword() {
   return process.env.ADMIN_PASSWORD;
 }
 
-function hmacHex(key: string, value: string) {
-  return createHmac("sha256", key).update(value).digest("hex");
-}
-
-function safeEqualHex(left: string, right: string) {
-  const leftBuffer = Buffer.from(left, "hex");
-  const rightBuffer = Buffer.from(right, "hex");
-
-  if (leftBuffer.length !== rightBuffer.length) {
-    return false;
-  }
-
-  return timingSafeEqual(leftBuffer, rightBuffer);
-}
-
-function passwordDigest(password: string) {
-  return hmacHex(PASSWORD_DIGEST_KEY, password);
-}
-
 export function verifyAdminPassword(password: string) {
-  const configuredPassword = getAdminPassword();
-
-  if (!configuredPassword || !password) {
-    return false;
-  }
-
-  return safeEqualHex(passwordDigest(password), passwordDigest(configuredPassword));
+  return verifyPassword(password, getAdminPassword());
 }
 
 export function createAdminSessionValue() {
@@ -47,7 +24,7 @@ export function createAdminSessionValue() {
     throw new Error("ADMIN_PASSWORD is not configured.");
   }
 
-  return hmacHex(configuredPassword, SESSION_PAYLOAD);
+  return createSignedAdminSessionValue(configuredPassword);
 }
 
 export async function isAdminAuthenticated() {
@@ -64,5 +41,5 @@ export async function isAdminAuthenticated() {
     return false;
   }
 
-  return safeEqualHex(sessionValue, createAdminSessionValue());
+  return verifyAdminSessionValue(sessionValue, configuredPassword);
 }
