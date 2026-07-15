@@ -122,28 +122,27 @@ test("adds a password-protected admin request list", async () => {
 
   assert.match(listPage, /Admin requests/);
   assert.match(listPage, /redirect\("\/admin\/requests"\)/);
-  assert.match(listPage, /access_requests/);
-  assert.match(listPage, /ORDER BY submitted_at DESC/);
   assert.match(listPage, /use_case/);
 
   assert.match(setupScript, /CREATE TABLE IF NOT EXISTS admin_login_attempts/);
 });
 
 test("adds admin review status and notes workflow", async () => {
-  const [listPage, updateRoute, reviewHelper, setupScript, packageJson] = await Promise.all([
+  const [listPage, updateRoute, reviewHelper, queryHelper, setupScript, packageJson] = await Promise.all([
     readFile(new URL("../app/admin/requests/list/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/admin/requests/[id]/route.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/admin/requests/request-review.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/requests/request-query.ts", import.meta.url), "utf8"),
     readFile(new URL("../scripts/setup-access-requests-db.mjs", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
 
   assert.match(listPage, /review_status/);
   assert.match(listPage, /admin_notes/);
-  assert.match(listPage, /reviewed_at/);
   assert.match(listPage, /name="review_status"/);
   assert.match(listPage, /name="admin_notes"/);
   assert.match(listPage, /Save review/);
+  assert.match(queryHelper, /reviewed_at/);
 
   assert.match(updateRoute, /export async function POST/);
   assert.match(updateRoute, /isAdminAuthenticated/);
@@ -165,6 +164,37 @@ test("adds admin review status and notes workflow", async () => {
   assert.match(setupScript, /access_requests_review_status_idx/);
 
   assert.match(packageJson, /db:setup:access-requests/);
+});
+
+test("adds admin search filters and protected CSV export", async () => {
+  const [listPage, exportRoute, queryHelper] = await Promise.all([
+    readFile(new URL("../app/admin/requests/list/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/requests/export/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/requests/request-query.ts", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(listPage, /searchParams/);
+  assert.match(listPage, /name="q"/);
+  assert.match(listPage, /name="status"/);
+  assert.match(listPage, /Export CSV/);
+  assert.match(listPage, /normalizeRequestFilters/);
+  assert.match(listPage, /getFilteredAccessRequests/);
+
+  assert.match(exportRoute, /export async function GET/);
+  assert.match(exportRoute, /isAdminAuthenticated/);
+  assert.match(exportRoute, /normalizeRequestFilters/);
+  assert.match(exportRoute, /getFilteredAccessRequests/);
+  assert.match(exportRoute, /formatAccessRequestsCsv/);
+  assert.match(exportRoute, /text\/csv/);
+  assert.match(exportRoute, /CSV_CONTENT_DISPOSITION/);
+
+  assert.match(queryHelper, /MAX_QUERY_LENGTH/);
+  assert.match(queryHelper, /access_requests/);
+  assert.match(queryHelper, /ILIKE/);
+  assert.match(queryHelper, /csvEscape/);
+  assert.match(queryHelper, /formatAccessRequestsCsv/);
+  assert.match(queryHelper, /CSV_CONTENT_DISPOSITION/);
+  assert.match(queryHelper, /attachment; filename="tokenapi-access-requests.csv"/);
 });
 
 test("removes the preview shell and loading dependency", async () => {

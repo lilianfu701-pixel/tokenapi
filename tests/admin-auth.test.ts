@@ -14,6 +14,10 @@ import {
   normalizeAdminNotes,
   validateReviewStatus,
 } from "../app/admin/requests/request-review.ts";
+import {
+  csvEscape,
+  normalizeRequestFilters,
+} from "../app/admin/requests/request-query.ts";
 
 test("verifies admin password without exposing raw string comparison", () => {
   assert.equal(verifyAdminPassword("correct horse", "correct horse"), true);
@@ -88,4 +92,31 @@ test("validates review statuses and clamps admin notes", () => {
 
   assert.equal(normalizeAdminNotes("  follow up next week  "), "follow up next week");
   assert.equal(normalizeAdminNotes("x".repeat(2501)), null);
+});
+
+test("normalizes admin request filters and escapes CSV cells", () => {
+  assert.deepEqual(
+    normalizeRequestFilters({
+      q: "  alice@example.com  ",
+      status: "approved",
+    }),
+    {
+      q: "alice@example.com",
+      status: "approved",
+    },
+  );
+  assert.deepEqual(
+    normalizeRequestFilters({
+      q: "x".repeat(160),
+      status: "pending",
+    }),
+    {
+      q: "x".repeat(120),
+      status: null,
+    },
+  );
+
+  assert.equal(csvEscape("plain"), "plain");
+  assert.equal(csvEscape('hello, "world"'), '"hello, ""world"""');
+  assert.equal(csvEscape("=IMPORTXML(\"https://bad\")"), "\"'=IMPORTXML(\"\"https://bad\"\")\"");
 });

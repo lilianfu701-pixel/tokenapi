@@ -1,20 +1,23 @@
 import { neon } from "@neondatabase/serverless";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isAdminAuthenticated } from "../admin-auth";
-import { REVIEW_STATUSES, type ReviewStatus } from "../request-review";
+import {
+  buildFilterQueryString,
+  getFilteredAccessRequests,
+  normalizeRequestFilters,
+  REVIEW_STATUSES,
+  type RequestFilters,
+} from "../request-query";
+import type { ReviewStatus } from "../request-review";
 
 export const dynamic = "force-dynamic";
 
-type AccessRequestRow = {
-  id: string;
-  name: string;
-  email: string;
-  company: string | null;
-  use_case: string;
-  review_status: ReviewStatus;
-  admin_notes: string;
-  reviewed_at: Date | string | null;
-  submitted_at: Date | string;
+type AdminRequestsListPageProps = {
+  searchParams?: Promise<{
+    q?: string;
+    status?: string;
+  }>;
 };
 
 const REVIEW_STATUS_LABELS: Record<ReviewStatus, string> = {
@@ -34,16 +37,8 @@ function getDatabase() {
   return neon(databaseUrl);
 }
 
-async function getAccessRequests() {
-  const sql = getDatabase();
-  const rows = await sql`
-    SELECT id, name, email, company, use_case, review_status, admin_notes, reviewed_at, submitted_at
-    FROM access_requests
-    ORDER BY submitted_at DESC
-    LIMIT 100
-  `;
-
-  return rows as AccessRequestRow[];
+async function getAccessRequests(filters: RequestFilters) {
+  return getFilteredAccessRequests(getDatabase(), filters, 100);
 }
 
 function formatSubmittedAt(value: Date | string) {
@@ -53,14 +48,20 @@ function formatSubmittedAt(value: Date | string) {
   }).format(new Date(value));
 }
 
-export default async function AdminRequestsListPage() {
+function buildExportHref(filters: RequestFilters) {
+  const queryString = buildFilterQueryString(filters);
+  return queryString ? `/admin/requests/export?${queryString}` : "/admin/requests/export";
+}
+
+export default async function AdminRequestsListPage({ searchParams }: AdminRequestsListPageProps) {
   const isAuthenticated = await isAdminAuthenticated();
 
   if (!isAuthenticated) {
     redirect("/admin/requests");
   }
 
-  const requests = await getAccessRequests();
+  const filters = normalizeRequestFilters((await searchParams) || {});
+  const requests = await getAccessRequests(filters);
 
   return (
     <main className="admin-shell">
@@ -78,9 +79,41 @@ export default async function AdminRequestsListPage() {
       </header>
 
       <section className="admin-card">
+        <form className="admin-filter-form" action="/admin/requests/list" method="get">
+          <label>
+            Search
+            <input
+              defaultValue={filters.q}
+              name="q"
+              placeholder="Name, email, company, or use case"
+              type="search"
+            />
+          </label>
+          <label>
+            Status
+            <select name="status" defaultValue={filters.status || ""}>
+              <option value="">All statuses</option>
+              {REVIEW_STATUSES.map((status) => (
+                <option key={status} value={status}>
+                  {REVIEW_STATUS_LABELS[status]}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button className="button button-primary" type="submit">
+            Apply filters
+          </button>
+          <Link className="button button-secondary" href="/admin/requests/list">
+            Clear
+          </Link>
+          <Link className="button button-secondary" href={buildExportHref(filters)}>
+            Export CSV
+          </Link>
+        </form>
+
         <div className="admin-table-header">
           <strong>{requests.length} requests</strong>
-          <span>Showing latest 100</span>
+          <span>Showing latest 100 matching requests</span>
         </div>
 
         {requests.length ? (
