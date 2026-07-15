@@ -325,9 +325,8 @@ export default function Home() {
 
         <form
           className="access-form"
-          action="mailto:hello@tokenapi.biz"
+          action="/api/access-requests"
           method="post"
-          encType="text/plain"
         >
           <label>
             Name
@@ -354,7 +353,8 @@ export default function Home() {
             Send access request
           </button>
           <p className="form-note">
-            Prefer direct email? Write to <a href="mailto:hello@tokenapi.biz">hello@tokenapi.biz</a>.
+            Requests are stored securely in the TokenAPI access queue. Prefer direct email? Write to{" "}
+            <a href="mailto:hello@tokenapi.biz">hello@tokenapi.biz</a>.
           </p>
         </form>
       </section>

@@ -47,6 +47,28 @@ test("contains developer docs and access request flow", async () => {
   assert.match(docs, /Error responses/);
 });
 
+test("wires access requests to a Neon-backed route", async () => {
+  const [page, route, setupScript, successPage] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/access-requests/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/setup-access-requests-db.mjs", import.meta.url), "utf8"),
+    readFile(new URL("../app/request-sent/page.tsx", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(page, /action="\/api\/access-requests"/);
+  assert.match(page, /method="post"/);
+  assert.match(route, /export async function POST/);
+  assert.match(route, /DATABASE_URL/);
+  assert.match(route, /MAX_FIELD_LENGTHS/);
+  assert.match(route, /invalid email address/i);
+  assert.match(route, /access_requests/);
+  assert.match(route, /NextResponse.redirect/);
+  assert.doesNotMatch(route, /INSERT INTO access_requests \$\{/);
+  assert.match(setupScript, /CREATE TABLE IF NOT EXISTS access_requests/);
+  assert.match(setupScript, /submitted_at TIMESTAMPTZ NOT NULL DEFAULT now\(\)/);
+  assert.match(successPage, /Access request received/);
+});
+
 test("removes the preview shell and loading dependency", async () => {
   const [page, packageJson] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
