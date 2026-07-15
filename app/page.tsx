@@ -1,197 +1,275 @@
-const languageCards = [
-  {
-    code: "EN",
-    label: "English",
-    eyebrow: "Global launch copy",
-    title: "Ship one idea, speak to the whole market.",
-    description:
-      "TokenAPI keeps the message aligned across launch pages, docs, and support content without making every market feel translated.",
-    bullets: [
-      "Write once in GitHub and reuse the same source of truth.",
-      "Preview and publish through Vercel with a fast feedback loop.",
-      "Keep product language, SEO, and CTA structure consistent.",
-    ],
-    tone: "cyan",
-  },
-  {
-    code: "中文",
-    label: "简体中文",
-    eyebrow: "全球中文受众",
-    title: "一次写清楚，多语言同步上线。",
-    description:
-      "把产品介绍、文档入口和转化路径统一到同一个内容系统里，让中文用户看到的是本地化表达，而不是直译。",
-    bullets: [
-      "适合 API、开发者工具和技术型品牌。",
-      "GitHub 里维护内容，Vercel 上直接预览。",
-      "术语、按钮和信息层级保持一致。",
-    ],
-    tone: "amber",
-  },
-  {
-    code: "ES",
-    label: "Español",
-    eyebrow: "Audience expansion",
-    title: "Una sola historia, lista para equipos globales.",
-    description:
-      "TokenAPI lets you present the same product with a voice that feels local in Spanish-speaking markets while staying consistent everywhere else.",
-    bullets: [
-      "Clear copy for buyers, partners, and engineers.",
-      "One design system, one deploy path, many locales.",
-      "Fast enough for launch campaigns and ongoing updates.",
-    ],
-    tone: "teal",
-  },
+const navItems = [
+  { label: "Product", href: "#product" },
+  { label: "API", href: "#api" },
+  { label: "Use cases", href: "#use-cases" },
+  { label: "Languages", href: "#languages" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "FAQ", href: "#faq" },
 ] as const;
 
-const metrics = [
-  { value: "3", label: "languages on the page" },
-  { value: "1", label: "source of truth in GitHub" },
-  { value: "1", label: "deploy path on Vercel" },
-] as const;
-
-const workflow = [
-  {
-    step: "01",
-    title: "Draft in GitHub",
-    description:
-      "Keep the copy, layout, and launch notes together so the whole team works from the same repository.",
-  },
-  {
-    step: "02",
-    title: "Preview on Vercel",
-    description:
-      "Every update gets a clean preview URL before the public site changes, which keeps the launch calm and predictable.",
-  },
-  {
-    step: "03",
-    title: "Publish globally",
-    description:
-      "When the page feels right, the same build can speak to English, Chinese, and Spanish audiences without a rewrite.",
-  },
+const stats = [
+  { value: "24/7", label: "market-ready token data" },
+  { value: "3", label: "launch languages" },
+  { value: "<120ms", label: "target edge response" },
 ] as const;
 
 const capabilities = [
   {
-    title: "Content architecture",
+    title: "Token profiles",
     description:
-      "One homepage structure, multiple language voices, and no duplicated layout decisions.",
+      "Resolve symbols, contracts, chains, logos, decimals, socials, and risk notes from one normalized endpoint.",
+    endpoint: "GET /v1/tokens/{chain}/{address}",
   },
   {
-    title: "API-first positioning",
+    title: "Live market snapshots",
     description:
-      "The site feels right for token, API, and developer-tool brands that need a credible business presence.",
+      "Surface price, liquidity, volume, market cap, and 24-hour movement for token pages and dashboards.",
+    endpoint: "GET /v1/markets/snapshot",
   },
   {
-    title: "SEO-ready metadata",
+    title: "Holder and transfer signals",
     description:
-      "Simple copy hierarchy, strong headings, and clean metadata for international discovery.",
+      "Track ownership concentration, recent transfer velocity, and wallet-level movement without building indexers.",
+    endpoint: "GET /v1/signals/holders",
   },
   {
-    title: "Fast deployment",
+    title: "Webhook alerts",
     description:
-      "GitHub keeps the edits organized and Vercel turns them into a public URL quickly.",
+      "Push token events into trading tools, compliance workflows, AI agents, and internal operations channels.",
+    endpoint: "POST /v1/webhooks",
+  },
+] as const;
+
+const useCases = [
+  {
+    title: "Wallets and portfolio apps",
+    description:
+      "Show users richer token pages with verified metadata, price movement, liquidity context, and risk labels.",
+  },
+  {
+    title: "Exchanges and launchpads",
+    description:
+      "Screen new listings, monitor market activity, and keep token pages consistent across regions.",
+  },
+  {
+    title: "AI agents",
+    description:
+      "Give agents structured token context they can cite when answering portfolio, research, or market questions.",
+  },
+  {
+    title: "Analytics dashboards",
+    description:
+      "Build token monitors, sector boards, and compliance views without maintaining your own ingestion pipeline.",
+  },
+] as const;
+
+const languagePanels = [
+  {
+    label: "English",
+    title: "Token data infrastructure for products that need trusted market context.",
+    body: "Position TokenAPI for developers, founders, and product teams that need clean crypto market data without building data plumbing first.",
+  },
+  {
+    label: "简体中文",
+    title: "为钱包、交易工具和 Web3 产品提供可信的 Token 数据 API。",
+    body: "中文内容面向开发者、项目方和增长团队，清楚说明接口能力、接入方式、价格和常见问题。",
+  },
+  {
+    label: "Español",
+    title: "Datos de tokens listos para productos cripto globales.",
+    body: "La versión en español ayuda a llegar a equipos, comunidades y clientes de mercados hispanohablantes con un mensaje local.",
+  },
+] as const;
+
+const pricingTiers = [
+  {
+    name: "Starter",
+    audience: "Indie builders",
+    price: "$0",
+    detail: "Prototype token search, metadata pages, and dashboards.",
+    features: ["1,000 requests / month", "Community chains", "Email support"],
+  },
+  {
+    name: "Developer",
+    audience: "Production apps",
+    price: "$49",
+    detail: "For teams shipping wallets, trackers, and internal tools.",
+    features: ["250k requests / month", "Webhook alerts", "Priority support"],
+  },
+  {
+    name: "Enterprise",
+    audience: "High-volume platforms",
+    price: "Custom",
+    detail: "Dedicated quotas, compliance workflows, and private chain coverage.",
+    features: ["Custom limits", "SLA options", "Private onboarding"],
+  },
+] as const;
+
+const integrationSteps = [
+  "Create an API key",
+  "Choose chains and endpoints",
+  "Test requests in preview",
+  "Deploy through GitHub and Vercel",
+] as const;
+
+const faqItems = [
+  {
+    question: "TokenAPI 现在是真实 API 吗？",
+    answer:
+      "当前网站先作为产品官网和需求收集入口上线。下一步可以接入真实数据源、API key、文档页和等待名单表单。",
+  },
+  {
+    question: "支持哪些链？",
+    answer:
+      "网站文案预留了 Ethereum、Solana、Base、BNB Chain 等常见链的表达空间，真实接口上线前可以按你的数据源调整。",
+  },
+  {
+    question: "Can this become a real developer portal?",
+    answer:
+      "Yes. The current structure is ready for docs, authentication, API reference pages, and live examples once we add the backend.",
   },
 ] as const;
 
 export default function Home() {
   return (
     <main className="site-shell">
-      <div className="orb orb-a" aria-hidden="true" />
-      <div className="orb orb-b" aria-hidden="true" />
-      <div className="orb orb-c" aria-hidden="true" />
-
-      <header className="topbar container">
-        <a className="brand" href="#top" aria-label="TokenAPI home">
+      <header className="topbar">
+        <a className="brand" href="#product" aria-label="TokenAPI home">
           <span className="brand-mark" aria-hidden="true">
             T
           </span>
-          <span className="brand-copy">
+          <span>
             <strong>TokenAPI</strong>
-            <span>Multilingual web presence</span>
+            <small>Global token data</small>
           </span>
         </a>
 
-        <nav className="topnav" aria-label="Sections">
-          <a href="#languages">Languages</a>
-          <a href="#workflow">GitHub + Vercel</a>
-          <a href="#capabilities">Capabilities</a>
+        <nav className="topnav" aria-label="Primary navigation">
+          {navItems.map((item) => (
+            <a key={item.href} href={item.href}>
+              {item.label}
+            </a>
+          ))}
         </nav>
       </header>
 
-      <section className="hero container" id="top">
+      <section className="hero" id="product">
         <div className="hero-copy">
-          <span className="eyebrow">
-            Built for global API brands and multilingual launches
-          </span>
-          <h1>One site, three languages, zero confusion.</h1>
-          <p className="hero-lead">
-            TokenAPI is a sharp, business-ready website for teams that want a
-            strong English, Chinese, and Spanish presence without splitting the
-            product story into three different experiences.
+          <span className="eyebrow">Token data API for global products</span>
+          <h1>Build crypto products with cleaner token context.</h1>
+          <p>
+            TokenAPI gives wallets, exchanges, AI agents, and analytics teams a
+            structured way to read token profiles, market snapshots, holder
+            signals, and webhook alerts from one developer-friendly surface.
           </p>
-
           <div className="hero-actions">
-            <a className="button button-primary" href="#languages">
-              Explore the languages
+            <a className="button button-primary" href="#api">
+              View API capabilities
             </a>
-            <a className="button button-secondary" href="#workflow">
-              See the GitHub + Vercel flow
+            <a className="button button-secondary" href="#contact">
+              Join the waitlist
             </a>
-          </div>
-
-          <div className="metric-row" aria-label="Project highlights">
-            {metrics.map((metric) => (
-              <article key={metric.label} className="metric-card">
-                <strong>{metric.value}</strong>
-                <span>{metric.label}</span>
-              </article>
-            ))}
           </div>
         </div>
 
-        <aside className="hero-panel" aria-label="Launch summary">
-          <div className="panel-head">
-            <span className="panel-label">Launch summary</span>
-            <span className="panel-pill">GitHub → Vercel</span>
+        <aside className="api-console" aria-label="Example API response">
+          <div className="console-bar">
+            <span>tokenapi.biz</span>
+            <span>200 OK</span>
           </div>
+          <pre>{`curl https://api.tokenapi.biz/v1/tokens/base/0x...
 
-          <div className="panel-body">
-            <p className="panel-title">
-              Designed to feel native in every market.
-            </p>
-            <ul className="panel-list">
-              <li>Localized copy for product buyers and developers</li>
-              <li>Shared layout and CTA strategy across all languages</li>
-              <li>Clean enough for docs, polished enough for a homepage</li>
-            </ul>
-          </div>
-
-          <div className="panel-footer">
-            <span className="mini-pill">English</span>
-            <span className="mini-pill">简体中文</span>
-            <span className="mini-pill">Español</span>
-          </div>
+{
+  "symbol": "TOKEN",
+  "chain": "Base",
+  "priceUsd": "1.28",
+  "liquidity": "8.4M",
+  "risk": "verified"
+}`}</pre>
         </aside>
       </section>
 
-      <section className="section container" id="languages">
+      <section className="stats-band" aria-label="TokenAPI highlights">
+        {stats.map((stat) => (
+          <article key={stat.label}>
+            <strong>{stat.value}</strong>
+            <span>{stat.label}</span>
+          </article>
+        ))}
+      </section>
+
+      <section className="section split-section" id="api">
+        <div className="section-intro">
+          <span className="eyebrow">API capabilities</span>
+          <h2>Everything a product needs before it can trust a token.</h2>
+          <p>
+            Start with normalized token data, then add market context, holder
+            signals, and event-driven workflows as your product grows.
+          </p>
+        </div>
+
+        <div className="capability-grid">
+          {capabilities.map((capability) => (
+            <article key={capability.title} className="content-card">
+              <span className="endpoint">{capability.endpoint}</span>
+              <h3>{capability.title}</h3>
+              <p>{capability.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section" id="use-cases">
         <div className="section-heading">
-          <span className="eyebrow">Three language voices</span>
-          <h2>Keep the brand consistent while the wording adapts locally.</h2>
+          <span className="eyebrow">Use cases</span>
+          <h2>Useful for teams that need token data inside real workflows.</h2>
+        </div>
+
+        <div className="use-case-grid">
+          {useCases.map((item) => (
+            <article key={item.title} className="content-card">
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section language-section" id="languages">
+        <div className="section-heading">
+          <span className="eyebrow">Multilingual reach</span>
+          <h2>One product story, written for three audiences from day one.</h2>
         </div>
 
         <div className="language-grid">
-          {languageCards.map((card) => (
-            <article key={card.label} className={`language-card tone-${card.tone}`}>
-              <div className="card-topline">
-                <span className="card-code">{card.code}</span>
-                <span className="card-eyebrow">{card.eyebrow}</span>
+          {languagePanels.map((panel) => (
+            <article key={panel.label} className="language-panel">
+              <span>{panel.label}</span>
+              <h3>{panel.title}</h3>
+              <p>{panel.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section pricing-section" id="pricing">
+        <div className="section-heading">
+          <span className="eyebrow">Pricing</span>
+          <h2>Simple tiers for prototypes, production apps, and platforms.</h2>
+        </div>
+
+        <div className="pricing-grid">
+          {pricingTiers.map((tier) => (
+            <article key={tier.name} className="pricing-card">
+              <div>
+                <span>{tier.audience}</span>
+                <h3>{tier.name}</h3>
               </div>
-              <h3>{card.title}</h3>
-              <p>{card.description}</p>
+              <strong>{tier.price}</strong>
+              <p>{tier.detail}</p>
               <ul>
-                {card.bullets.map((bullet) => (
-                  <li key={bullet}>{bullet}</li>
+                {tier.features.map((feature) => (
+                  <li key={feature}>{feature}</li>
                 ))}
               </ul>
             </article>
@@ -199,55 +277,59 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section container" id="workflow">
-        <div className="section-heading narrow">
-          <span className="eyebrow">Workflow</span>
-          <h2>GitHub keeps the source tidy. Vercel turns it into a public site.</h2>
-        </div>
-
-        <div className="workflow-grid">
-          {workflow.map((item) => (
-            <article key={item.step} className="workflow-card">
-              <span className="workflow-step">{item.step}</span>
-              <h3>{item.title}</h3>
-              <p>{item.description}</p>
-            </article>
-          ))}
+      <section className="section integration-section">
+        <div className="integration-panel">
+          <div>
+            <span className="eyebrow">Integration path</span>
+            <h2>From first API key to production deployment.</h2>
+          </div>
+          <ol>
+            {integrationSteps.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
+          <p>
+            The website is maintained in GitHub and deployed through Vercel, so
+            every content update can be reviewed before it reaches production.
+          </p>
         </div>
       </section>
 
-      <section className="section container" id="capabilities">
+      <section className="section faq-section" id="faq">
         <div className="section-heading">
-          <span className="eyebrow">Why it works</span>
-          <h2>A layout that gives broad reach without feeling generic.</h2>
+          <span className="eyebrow">常见问题</span>
+          <h2>Clear answers before the API backend goes live.</h2>
         </div>
 
-        <div className="capability-grid">
-          {capabilities.map((item) => (
-            <article key={item.title} className="capability-card">
-              <h3>{item.title}</h3>
-              <p>{item.description}</p>
+        <div className="faq-list">
+          {faqItems.map((item) => (
+            <article key={item.question} className="faq-item">
+              <h3>{item.question}</h3>
+              <p>{item.answer}</p>
             </article>
           ))}
         </div>
       </section>
 
-      <section className="section container cta-shell" aria-label="Call to action">
+      <section className="contact-section" id="contact">
         <div>
-          <span className="eyebrow">Ready for the next step</span>
-          <h2>We can wire in your real GitHub repo and Vercel project next.</h2>
+          <span className="eyebrow">Lista de espera</span>
+          <h2>Tell early users what TokenAPI is becoming.</h2>
         </div>
         <p>
-          This first version gives TokenAPI a polished multilingual front page.
-          Once your GitHub connection is refreshed, I can connect the codebase
-          and move the same site into your deployment pipeline.
+          Add a waitlist, API-key request form, Telegram link, or full developer
+          dashboard next. This version gives the domain a real product story
+          while we decide which backend to connect.
         </p>
+        <a className="button button-primary" href="mailto:hello@tokenapi.biz">
+          Contact TokenAPI
+        </a>
       </section>
 
-      <footer className="footer container">
+      <footer className="footer">
         <span>TokenAPI.biz</span>
-        <span>Built for international audiences</span>
-        <span>GitHub + Vercel ready</span>
+        <span>Built with GitHub and Vercel</span>
+        <span>English · 简体中文 · Español</span>
       </footer>
     </main>
   );

@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TokenAPI | Multilingual website for global launches",
+  title: "TokenAPI | Token data API for global products",
   description:
-    "TokenAPI is a multilingual website concept for API brands, built to ship cleanly through GitHub and Vercel.",
+    "TokenAPI is a multilingual token data API website for wallets, exchanges, AI agents, and analytics products.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
