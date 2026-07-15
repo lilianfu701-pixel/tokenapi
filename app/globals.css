@@ -500,6 +500,275 @@ li {
     var(--panel);
 }
 
+.access-section {
+  grid-template-columns: minmax(0, 0.85fr) minmax(320px, 1fr);
+  align-items: stretch;
+}
+
+.access-copy {
+  display: grid;
+  align-content: center;
+  gap: 14px;
+}
+
+.access-form {
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.76);
+  padding: 18px;
+}
+
+.access-form label {
+  display: grid;
+  gap: 7px;
+  color: var(--foreground);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.access-form input,
+.access-form textarea {
+  width: 100%;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: #fffdf8;
+  color: var(--foreground);
+  font: inherit;
+  font-weight: 500;
+  outline: none;
+  padding: 12px;
+}
+
+.access-form textarea {
+  resize: vertical;
+}
+
+.access-form input:focus,
+.access-form textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0, 143, 122, 0.12);
+}
+
+.access-form .button {
+  border: 0;
+  cursor: pointer;
+  width: 100%;
+}
+
+.form-note {
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.form-note a {
+  color: var(--accent-dark);
+  font-weight: 800;
+}
+
+.docs-shell {
+  width: min(1180px, calc(100vw - 32px));
+  margin: 0 auto;
+  padding: 20px 0 48px;
+}
+
+.docs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0 24px;
+}
+
+.docs-hero {
+  display: grid;
+  gap: 18px;
+  border: 1px solid var(--ink);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(0, 143, 122, 0.11), transparent 40%),
+    var(--panel);
+  box-shadow: var(--shadow);
+  padding: clamp(28px, 5vw, 58px);
+}
+
+.docs-hero h1 {
+  max-width: 13ch;
+  font-size: clamp(3rem, 7vw, 6.5rem);
+  letter-spacing: 0;
+  line-height: 0.92;
+}
+
+.docs-hero p {
+  max-width: 760px;
+  color: var(--muted);
+  font-size: clamp(1rem, 1.8vw, 1.15rem);
+  line-height: 1.7;
+}
+
+.docs-grid {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  padding-top: 18px;
+}
+
+.docs-sidebar {
+  position: sticky;
+  top: 16px;
+  display: grid;
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 10px;
+}
+
+.docs-sidebar a {
+  border-radius: 8px;
+  color: var(--muted);
+  font-weight: 800;
+  padding: 10px;
+}
+
+.docs-sidebar a:hover {
+  background: rgba(0, 143, 122, 0.08);
+  color: var(--accent-dark);
+}
+
+.docs-content {
+  display: grid;
+  gap: 14px;
+}
+
+.docs-card {
+  display: grid;
+  gap: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.76);
+  box-shadow: 0 16px 38px rgba(22, 33, 28, 0.07);
+  padding: 24px;
+}
+
+.docs-card h2 {
+  font-size: clamp(1.55rem, 3vw, 2.6rem);
+  line-height: 1.02;
+}
+
+.docs-card h3 {
+  font-size: 1rem;
+}
+
+.docs-card p {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.docs-kicker {
+  color: var(--amber);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.docs-card pre {
+  overflow-x: auto;
+  border: 1px solid rgba(223, 248, 237, 0.16);
+  border-radius: 8px;
+  background: var(--ink);
+  color: #f0fff8;
+  font-family: var(--font-geist-mono), "Cascadia Code", monospace;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 16px;
+}
+
+.endpoint-table,
+.error-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.endpoint-row {
+  display: grid;
+  grid-template-columns: 68px minmax(190px, 0.75fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-warm);
+  padding: 14px;
+}
+
+.endpoint-row span {
+  width: fit-content;
+  border-radius: 8px;
+  background: var(--accent);
+  color: white;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.78rem;
+  font-weight: 900;
+  padding: 6px 8px;
+}
+
+.endpoint-row code,
+.error-grid code {
+  color: var(--accent-dark);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.response-grid,
+.docs-two-column {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.docs-list {
+  display: grid;
+  gap: 10px;
+}
+
+.docs-list li {
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-warm);
+  padding: 12px;
+}
+
+.error-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.error-grid article {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-warm);
+  padding: 14px;
+}
+
+.error-grid strong {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 1.4rem;
+}
+
+.launch-note {
+  background:
+    linear-gradient(135deg, rgba(0, 143, 122, 0.11), transparent 35%),
+    rgba(255, 255, 255, 0.82);
+}
+
 .footer {
   display: flex;
   flex-wrap: wrap;
@@ -524,8 +793,17 @@ li {
   .split-section,
   .integration-panel,
   .contact-section,
-  .faq-item {
+  .faq-item,
+  .access-section,
+  .docs-grid,
+  .response-grid,
+  .docs-two-column {
     grid-template-columns: 1fr;
+  }
+
+  .docs-sidebar {
+    position: static;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .hero {
@@ -538,12 +816,22 @@ li {
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .endpoint-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 640px) {
-  .site-shell {
+  .site-shell,
+  .docs-shell {
     width: min(100vw - 20px, 100%);
     padding-top: 10px;
+  }
+
+  .docs-header {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .hero-copy,
@@ -559,7 +847,9 @@ li {
   .capability-grid,
   .use-case-grid,
   .language-grid,
-  .pricing-grid {
+  .pricing-grid,
+  .error-grid,
+  .docs-sidebar {
     grid-template-columns: 1fr;
   }
 
@@ -572,8 +862,14 @@ li {
   .pricing-card,
   .faq-item,
   .integration-panel,
-  .contact-section {
+  .contact-section,
+  .docs-card,
+  .docs-hero {
     padding: 18px;
+  }
+
+  .docs-hero h1 {
+    font-size: clamp(2.55rem, 14vw, 4rem);
   }
 
   .footer {

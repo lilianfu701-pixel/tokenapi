@@ -29,6 +29,24 @@ test("contains the production TokenAPI content-site sections", async () => {
   assert.match(page, /Vercel/);
 });
 
+test("contains developer docs and access request flow", async () => {
+  const [page, docs] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/docs/page.tsx", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(page, /Request API Access/);
+  assert.match(page, /name="email"/);
+  assert.match(page, /name="use_case"/);
+  assert.match(page, /\/docs/);
+
+  assert.match(docs, /TokenAPI Developer Docs/);
+  assert.match(docs, /Authorization: Bearer tk_live_/);
+  assert.match(docs, /GET \/v1\/tokens\/\{chain\}\/\{address\}/);
+  assert.match(docs, /Rate limits/);
+  assert.match(docs, /Error responses/);
+});
+
 test("removes the preview shell and loading dependency", async () => {
   const [page, packageJson] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),

@@ -2,6 +2,7 @@ const navItems = [
   { label: "Product", href: "#product" },
   { label: "API", href: "#api" },
   { label: "Use cases", href: "#use-cases" },
+  { label: "Docs", href: "/docs" },
   { label: "Languages", href: "#languages" },
   { label: "Pricing", href: "#pricing" },
   { label: "FAQ", href: "#faq" },
@@ -163,11 +164,11 @@ export default function Home() {
             signals, and webhook alerts from one developer-friendly surface.
           </p>
           <div className="hero-actions">
-            <a className="button button-primary" href="#api">
-              View API capabilities
+            <a className="button button-primary" href="#contact">
+              Request API Access
             </a>
-            <a className="button button-secondary" href="#contact">
-              Join the waitlist
+            <a className="button button-secondary" href="/docs">
+              Read developer docs
             </a>
           </div>
         </div>
@@ -311,19 +312,51 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="contact-section" id="contact">
-        <div>
+      <section className="contact-section access-section" id="contact">
+        <div className="access-copy">
           <span className="eyebrow">Lista de espera</span>
-          <h2>Tell early users what TokenAPI is becoming.</h2>
+          <h2>Request API Access</h2>
+          <p>
+            Tell us what you want to build with TokenAPI. For now this static
+            form opens your email client; the next step can connect it to a real
+            database or CRM.
+          </p>
         </div>
-        <p>
-          Add a waitlist, API-key request form, Telegram link, or full developer
-          dashboard next. This version gives the domain a real product story
-          while we decide which backend to connect.
-        </p>
-        <a className="button button-primary" href="mailto:hello@tokenapi.biz">
-          Contact TokenAPI
-        </a>
+
+        <form
+          className="access-form"
+          action="mailto:hello@tokenapi.biz"
+          method="post"
+          encType="text/plain"
+        >
+          <label>
+            Name
+            <input name="name" type="text" placeholder="Your name" required />
+          </label>
+          <label>
+            Email
+            <input name="email" type="email" placeholder="you@example.com" required />
+          </label>
+          <label>
+            Company or project
+            <input name="company" type="text" placeholder="Wallet, exchange, app, or fund" />
+          </label>
+          <label>
+            Use case
+            <textarea
+              name="use_case"
+              placeholder="Tell us which token data workflow you need first."
+              rows={4}
+              required
+            />
+          </label>
+          <button className="button button-primary" type="submit">
+            Send access request
+          </button>
+          <p className="form-note">
+            Prefer direct email? Write to <a href="mailto:hello@tokenapi.biz">hello@tokenapi.biz</a>.
+          </p>
+        </form>
       </section>
 
       <footer className="footer">
