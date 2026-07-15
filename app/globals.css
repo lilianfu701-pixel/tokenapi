@@ -937,6 +937,53 @@ li {
   font-weight: 800;
 }
 
+.admin-review-form {
+  display: grid;
+  gap: 9px;
+  min-width: 210px;
+}
+
+.admin-review-form label {
+  display: grid;
+  gap: 6px;
+}
+
+.admin-review-form label span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-review-form select,
+.admin-review-form textarea {
+  width: 100%;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: #fffdf8;
+  color: var(--foreground);
+  font: inherit;
+  outline: none;
+  padding: 10px;
+}
+
+.admin-review-form textarea {
+  min-height: 92px;
+  resize: vertical;
+}
+
+.admin-review-form select:focus,
+.admin-review-form textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0, 143, 122, 0.12);
+}
+
+.admin-review-form .button {
+  min-height: 38px;
+  width: 100%;
+}
+
 .admin-empty {
   border: 1px solid var(--border);
   border-radius: 8px;

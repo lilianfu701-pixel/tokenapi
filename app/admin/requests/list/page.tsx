@@ -1,6 +1,7 @@
 import { neon } from "@neondatabase/serverless";
 import { redirect } from "next/navigation";
 import { isAdminAuthenticated } from "../admin-auth";
+import { REVIEW_STATUSES, type ReviewStatus } from "../request-review";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +11,17 @@ type AccessRequestRow = {
   email: string;
   company: string | null;
   use_case: string;
+  review_status: ReviewStatus;
+  admin_notes: string;
+  reviewed_at: Date | string | null;
   submitted_at: Date | string;
+};
+
+const REVIEW_STATUS_LABELS: Record<ReviewStatus, string> = {
+  new: "New",
+  contacted: "Contacted",
+  approved: "Approved",
+  rejected: "Rejected",
 };
 
 function getDatabase() {
@@ -26,7 +37,7 @@ function getDatabase() {
 async function getAccessRequests() {
   const sql = getDatabase();
   const rows = await sql`
-    SELECT id, name, email, company, use_case, submitted_at
+    SELECT id, name, email, company, use_case, review_status, admin_notes, reviewed_at, submitted_at
     FROM access_requests
     ORDER BY submitted_at DESC
     LIMIT 100
@@ -80,7 +91,9 @@ export default async function AdminRequestsListPage() {
                   <th>Name</th>
                   <th>Email</th>
                   <th>Company</th>
+                  <th>Status</th>
                   <th>Use case</th>
+                  <th>Admin notes</th>
                   <th>Submitted</th>
                 </tr>
               </thead>
@@ -91,8 +104,40 @@ export default async function AdminRequestsListPage() {
                     <td>
                       <a href={`mailto:${request.email}`}>{request.email}</a>
                     </td>
-                    <td>{request.company || "—"}</td>
+                    <td>{request.company || "-"}</td>
+                    <td>
+                      <form
+                        className="admin-review-form"
+                        action={`/admin/requests/${request.id}`}
+                        method="post"
+                      >
+                        <label>
+                          <span>Review status</span>
+                          <select name="review_status" defaultValue={request.review_status}>
+                            {REVIEW_STATUSES.map((status) => (
+                              <option key={status} value={status}>
+                                {REVIEW_STATUS_LABELS[status]}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                        <label>
+                          <span>Admin notes</span>
+                          <textarea
+                            name="admin_notes"
+                            defaultValue={request.admin_notes}
+                            maxLength={2500}
+                            placeholder="Private follow-up notes"
+                            rows={4}
+                          />
+                        </label>
+                        <button className="button button-secondary" type="submit">
+                          Save review
+                        </button>
+                      </form>
+                    </td>
                     <td>{request.use_case}</td>
+                    <td>{request.admin_notes || "No notes yet"}</td>
                     <td>{formatSubmittedAt(request.submitted_at)}</td>
                   </tr>
                 ))}

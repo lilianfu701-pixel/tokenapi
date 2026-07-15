@@ -129,6 +129,44 @@ test("adds a password-protected admin request list", async () => {
   assert.match(setupScript, /CREATE TABLE IF NOT EXISTS admin_login_attempts/);
 });
 
+test("adds admin review status and notes workflow", async () => {
+  const [listPage, updateRoute, reviewHelper, setupScript, packageJson] = await Promise.all([
+    readFile(new URL("../app/admin/requests/list/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/requests/[id]/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/requests/request-review.ts", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/setup-access-requests-db.mjs", import.meta.url), "utf8"),
+    readFile(new URL("../package.json", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(listPage, /review_status/);
+  assert.match(listPage, /admin_notes/);
+  assert.match(listPage, /reviewed_at/);
+  assert.match(listPage, /name="review_status"/);
+  assert.match(listPage, /name="admin_notes"/);
+  assert.match(listPage, /Save review/);
+
+  assert.match(updateRoute, /export async function POST/);
+  assert.match(updateRoute, /isAdminAuthenticated/);
+  assert.match(updateRoute, /validateReviewStatus/);
+  assert.match(updateRoute, /normalizeAdminNotes/);
+  assert.match(updateRoute, /UPDATE access_requests/);
+  assert.match(updateRoute, /WHERE id = \$\{requestId\}/);
+  assert.doesNotMatch(updateRoute, /UPDATE access_requests \$\{/);
+
+  assert.match(reviewHelper, /new/);
+  assert.match(reviewHelper, /contacted/);
+  assert.match(reviewHelper, /approved/);
+  assert.match(reviewHelper, /rejected/);
+  assert.match(reviewHelper, /MAX_ADMIN_NOTES_LENGTH/);
+
+  assert.match(setupScript, /review_status TEXT NOT NULL DEFAULT 'new'/);
+  assert.match(setupScript, /admin_notes TEXT NOT NULL DEFAULT ''/);
+  assert.match(setupScript, /reviewed_at TIMESTAMPTZ/);
+  assert.match(setupScript, /access_requests_review_status_idx/);
+
+  assert.match(packageJson, /db:setup:access-requests/);
+});
+
 test("removes the preview shell and loading dependency", async () => {
   const [page, packageJson] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),

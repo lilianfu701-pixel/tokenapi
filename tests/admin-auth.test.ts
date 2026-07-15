@@ -10,6 +10,10 @@ import {
   getLoginAttemptIdentifier,
   isLoginAttemptLocked,
 } from "../app/admin/requests/admin-rate-limit.ts";
+import {
+  normalizeAdminNotes,
+  validateReviewStatus,
+} from "../app/admin/requests/request-review.ts";
 
 test("verifies admin password without exposing raw string comparison", () => {
   assert.equal(verifyAdminPassword("correct horse", "correct horse"), true);
@@ -73,4 +77,15 @@ test("treats future locked_until timestamps as active login lockouts", () => {
     ),
     false,
   );
+});
+
+test("validates review statuses and clamps admin notes", () => {
+  assert.equal(validateReviewStatus("new"), "new");
+  assert.equal(validateReviewStatus("contacted"), "contacted");
+  assert.equal(validateReviewStatus("approved"), "approved");
+  assert.equal(validateReviewStatus("rejected"), "rejected");
+  assert.equal(validateReviewStatus("pending"), null);
+
+  assert.equal(normalizeAdminNotes("  follow up next week  "), "follow up next week");
+  assert.equal(normalizeAdminNotes("x".repeat(2501)), null);
 });

@@ -31,14 +31,37 @@ await sql`
     email TEXT NOT NULL,
     company TEXT,
     use_case TEXT NOT NULL,
+    review_status TEXT NOT NULL DEFAULT 'new',
+    admin_notes TEXT NOT NULL DEFAULT '',
+    reviewed_at TIMESTAMPTZ,
     source TEXT NOT NULL DEFAULT 'tokenapi.biz',
     submitted_at TIMESTAMPTZ NOT NULL DEFAULT now()
   )
 `;
 
 await sql`
+  ALTER TABLE access_requests
+  ADD COLUMN IF NOT EXISTS review_status TEXT NOT NULL DEFAULT 'new'
+`;
+
+await sql`
+  ALTER TABLE access_requests
+  ADD COLUMN IF NOT EXISTS admin_notes TEXT NOT NULL DEFAULT ''
+`;
+
+await sql`
+  ALTER TABLE access_requests
+  ADD COLUMN IF NOT EXISTS reviewed_at TIMESTAMPTZ
+`;
+
+await sql`
   CREATE INDEX IF NOT EXISTS access_requests_submitted_at_idx
   ON access_requests (submitted_at DESC)
+`;
+
+await sql`
+  CREATE INDEX IF NOT EXISTS access_requests_review_status_idx
+  ON access_requests (review_status)
 `;
 
 console.log("access_requests table is ready.");
