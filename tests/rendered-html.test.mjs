@@ -69,6 +69,41 @@ test("wires access requests to a Neon-backed route", async () => {
   assert.match(successPage, /Access request received/);
 });
 
+test("adds a password-protected admin request list", async () => {
+  const [loginPage, authHelper, loginRoute, logoutRoute, listPage] = await Promise.all([
+    readFile(new URL("../app/admin/requests/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/requests/admin-auth.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/requests/login/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/requests/logout/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/requests/list/page.tsx", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(loginPage, /Admin password/);
+  assert.match(loginPage, /action="\/admin\/requests\/login"/);
+  assert.match(loginPage, /name="password"/);
+
+  assert.match(authHelper, /ADMIN_PASSWORD/);
+  assert.match(authHelper, /createHmac/);
+  assert.match(authHelper, /timingSafeEqual/);
+  assert.match(authHelper, /tokenapi_admin_session/);
+
+  assert.match(loginRoute, /export async function POST/);
+  assert.match(loginRoute, /httpOnly: true/);
+  assert.match(loginRoute, /sameSite: "strict"/);
+  assert.match(loginRoute, /secure: process\.env\.NODE_ENV === "production"/);
+  assert.match(loginRoute, /NextResponse\.redirect/);
+
+  assert.match(logoutRoute, /export async function POST/);
+  assert.match(logoutRoute, /ADMIN_COOKIE_NAME/);
+  assert.match(logoutRoute, /maxAge: 0/);
+
+  assert.match(listPage, /Admin requests/);
+  assert.match(listPage, /redirect\("\/admin\/requests"\)/);
+  assert.match(listPage, /access_requests/);
+  assert.match(listPage, /ORDER BY submitted_at DESC/);
+  assert.match(listPage, /use_case/);
+});
+
 test("removes the preview shell and loading dependency", async () => {
   const [page, packageJson] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
