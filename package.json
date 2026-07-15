@@ -12,7 +12,8 @@
     "test": "node --test tests/rendered-html.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
-    "db:setup:access-requests": "node scripts/setup-access-requests-db.mjs"
+    "db:setup:access-requests": "node scripts/setup-access-requests-db.mjs",
+    "db:check:access-request": "node scripts/check-access-request.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
