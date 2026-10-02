@@ -2,56 +2,90 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "TokenAPI Developer Docs | API reference",
+  title: "TokenAPI Docs | AI Model Pricing API Reference",
   description:
-    "Developer documentation for TokenAPI token profiles, market snapshots, holder signals, webhooks, rate limits, and error responses.",
+    "API reference for TokenAPI: query AI model pricing, capabilities, and provider data. Covers /models, /providers, /compare, and /search endpoints.",
 };
 
 const docNav = [
   { label: "Overview", href: "#overview" },
-  { label: "Authentication", href: "#authentication" },
+  { label: "Base URL", href: "#base-url" },
   { label: "Endpoints", href: "#endpoints" },
-  { label: "Examples", href: "#examples" },
-  { label: "Limits", href: "#limits" },
+  { label: "Filtering", href: "#filtering" },
+  { label: "Response format", href: "#response-format" },
   { label: "Errors", href: "#errors" },
 ] as const;
 
 const endpointRows = [
   {
     method: "GET",
-    path: "/v1/tokens/{chain}/{address}",
-    signature: "GET /v1/tokens/{chain}/{address}",
-    title: "Token profile",
-    description: "Return normalized metadata, contract details, socials, and verification notes.",
+    path: "/api/v1/models",
+    title: "List models",
+    description:
+      "Paginated list of all AI models. Supports filtering by provider, capabilities, cost, and context window.",
+    example: `curl "https://tokenapi.biz/api/v1/models?provider=anthropic&reasoning=true&limit=5"`,
   },
   {
     method: "GET",
-    path: "/v1/markets/snapshot",
-    signature: "GET /v1/markets/snapshot",
-    title: "Market snapshot",
-    description: "Return price, liquidity, volume, market cap, and short-window movement.",
+    path: "/api/v1/models/{provider}/{id}",
+    title: "Model detail",
+    description:
+      "Full detail for a single model including all pricing fields, capabilities, modalities, and provider metadata.",
+    example: `curl "https://tokenapi.biz/api/v1/models/openai/gpt-5"`,
   },
   {
     method: "GET",
-    path: "/v1/signals/holders",
-    signature: "GET /v1/signals/holders",
-    title: "Holder signals",
-    description: "Return ownership concentration, top holder ranges, and transfer velocity.",
+    path: "/api/v1/providers",
+    title: "List providers",
+    description:
+      "All providers with model counts, SDK package names, API endpoints, and documentation links.",
+    example: `curl "https://tokenapi.biz/api/v1/providers"`,
   },
   {
-    method: "POST",
-    path: "/v1/webhooks",
-    signature: "POST /v1/webhooks",
-    title: "Webhook subscription",
-    description: "Register token events for alerts, monitoring workflows, and agent triggers.",
+    method: "GET",
+    path: "/api/v1/providers/{id}",
+    title: "Provider detail",
+    description:
+      "Provider metadata plus all models under that provider.",
+    example: `curl "https://tokenapi.biz/api/v1/providers/anthropic"`,
+  },
+  {
+    method: "GET",
+    path: "/api/v1/compare",
+    title: "Compare models",
+    description:
+      "Side-by-side comparison of 2–10 models. Pass comma-separated provider/model IDs.",
+    example: `curl "https://tokenapi.biz/api/v1/compare?ids=openai/gpt-5,anthropic/claude-sonnet-5-5"`,
+  },
+  {
+    method: "GET",
+    path: "/api/v1/search",
+    title: "Search",
+    description:
+      "Full-text search across model names, descriptions, families, and providers. Supports capability filters.",
+    example: `curl "https://tokenapi.biz/api/v1/search?q=claude&capability=reasoning"`,
   },
 ] as const;
 
+const filterParams = [
+  { param: "provider", type: "string", description: "Filter by provider ID (e.g. openai, anthropic)" },
+  { param: "reasoning", type: "boolean", description: "Models with reasoning capability" },
+  { param: "tool_call", type: "boolean", description: "Models with tool/function calling" },
+  { param: "attachment", type: "boolean", description: "Models that accept file attachments" },
+  { param: "open_weights", type: "boolean", description: "Open-weight models only" },
+  { param: "family", type: "string", description: "Model family (e.g. claude, gpt)" },
+  { param: "min_context", type: "integer", description: "Minimum context window size" },
+  { param: "max_cost_input", type: "number", description: "Maximum input cost per million tokens (USD)" },
+  { param: "sort", type: "string", description: "Sort field: cost_input, cost_output, context_limit, name, release_date" },
+  { param: "order", type: "string", description: "Sort direction: asc (default) or desc" },
+  { param: "page", type: "integer", description: "Page number (default: 1)" },
+  { param: "limit", type: "integer", description: "Results per page (default: 50, max: 200)" },
+] as const;
+
 const errorRows = [
-  { code: "400", name: "bad_request", detail: "The request is missing a required chain, address, or parameter." },
-  { code: "401", name: "unauthorized", detail: "The API key is missing, expired, or malformed." },
-  { code: "404", name: "not_found", detail: "The token or chain could not be resolved." },
-  { code: "429", name: "rate_limited", detail: "The workspace exceeded its current request quota." },
+  { code: "400", name: "INVALID_PARAM", detail: "A query parameter is missing, malformed, or out of range." },
+  { code: "404", name: "NOT_FOUND", detail: "The requested model or provider does not exist." },
+  { code: "500", name: "DB_ERROR", detail: "An internal database error occurred." },
 ] as const;
 
 export default function DocsPage() {
@@ -64,20 +98,21 @@ export default function DocsPage() {
           </span>
           <span>
             <strong>TokenAPI</strong>
-            <small>Developer docs</small>
+            <small>API docs</small>
           </span>
         </Link>
-        <Link className="button button-secondary" href="/#contact">
-          Request API Access
-        </Link>
+        <a className="button button-secondary" href="mailto:hello@tokenapi.biz">
+          Contact us
+        </a>
       </header>
 
       <section className="docs-hero" id="overview">
-        <span className="eyebrow">TokenAPI Developer Docs</span>
-        <h1>Build with structured token data before running your own indexers.</h1>
+        <span className="eyebrow">API Reference</span>
+        <h1>AI model pricing data, one REST call away.</h1>
         <p>
-          TokenAPI is designed as a clean API layer for token profiles, market snapshots,
-          holder signals, webhook alerts, and product-ready crypto data workflows.
+          TokenAPI provides structured access to 4,900+ AI models from 60+
+          providers. Query pricing, context limits, capabilities, and compare
+          models programmatically. No API key required during beta.
         </p>
       </section>
 
@@ -91,25 +126,25 @@ export default function DocsPage() {
         </aside>
 
         <div className="docs-content">
-          <section className="docs-card" id="authentication">
-            <span className="docs-kicker">Authentication</span>
-            <h2>Use a bearer token for every request.</h2>
+          <section className="docs-card" id="base-url">
+            <span className="docs-kicker">Base URL</span>
+            <h2>All requests go to tokenapi.biz</h2>
+            <pre>https://tokenapi.biz/api/v1</pre>
             <p>
-              API keys will be issued per workspace. Keep live keys server-side and use
-              separate keys for production, staging, and local testing.
+              CORS is enabled for all origins. No authentication is required
+              during the beta period. Responses are JSON with a consistent
+              envelope format.
             </p>
-            <pre>{`Authorization: Bearer tk_live_your_workspace_key
-Content-Type: application/json`}</pre>
           </section>
 
           <section className="docs-card" id="endpoints">
-            <span className="docs-kicker">Core endpoints</span>
-            <h2>Start with four product-facing surfaces.</h2>
+            <span className="docs-kicker">Endpoints</span>
+            <h2>Six endpoints cover the full catalog.</h2>
             <div className="endpoint-table">
               {endpointRows.map((endpoint) => (
                 <article key={endpoint.path} className="endpoint-row">
                   <span>{endpoint.method}</span>
-                  <code>{endpoint.signature}</code>
+                  <code>{endpoint.path}</code>
                   <div>
                     <h3>{endpoint.title}</h3>
                     <p>{endpoint.description}</p>
@@ -119,56 +154,60 @@ Content-Type: application/json`}</pre>
             </div>
           </section>
 
-          <section className="docs-card" id="examples">
-            <span className="docs-kicker">Example request</span>
-            <h2>Fetch a token profile by chain and contract.</h2>
-            <pre>{`curl https://api.tokenapi.biz/v1/tokens/base/0xabc... \
-  -H "Authorization: Bearer tk_live_your_workspace_key"`}</pre>
+          <section className="docs-card" id="filtering">
+            <span className="docs-kicker">Query parameters</span>
+            <h2>Filter, sort, and paginate the model list.</h2>
+            <p>
+              The <code>/api/v1/models</code> endpoint accepts these query
+              parameters. All are optional.
+            </p>
+            <div className="endpoint-table">
+              {filterParams.map((p) => (
+                <article key={p.param} className="endpoint-row">
+                  <span style={{ background: "var(--amber)" }}>{p.type}</span>
+                  <code>{p.param}</code>
+                  <div>
+                    <p>{p.description}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="docs-card" id="response-format">
+            <span className="docs-kicker">Response format</span>
+            <h2>Consistent JSON envelope on every response.</h2>
             <div className="response-grid">
               <div>
-                <h3>Example response</h3>
+                <h3>Success response</h3>
                 <p>
-                  Responses are normalized for UI rendering, search indexing, and agent context.
+                  Every successful response wraps data in a <code>success: true</code> envelope.
+                  Paginated endpoints include a <code>meta</code> object with total count and page info.
                 </p>
               </div>
               <pre>{`{
-  "chain": "base",
-  "address": "0xabc...",
-  "symbol": "TOKEN",
-  "name": "Example Token",
-  "decimals": 18,
-  "market": {
-    "priceUsd": "1.28",
-    "liquidityUsd": "8400000",
-    "volume24hUsd": "1150000"
-  },
-  "risk": {
-    "status": "verified",
-    "notes": ["contract verified"]
+  "success": true,
+  "data": [ ... ],
+  "meta": {
+    "total": 4914,
+    "page": 1,
+    "limit": 50,
+    "has_more": true
   }
 }`}</pre>
             </div>
           </section>
 
-          <section className="docs-card docs-two-column" id="limits">
-            <div>
-              <span className="docs-kicker">Rate limits</span>
-              <h2>Rate limits scale by plan.</h2>
-              <p>
-                Starter keys are intended for prototypes. Developer and Enterprise keys
-                unlock higher throughput, webhook delivery, and priority support.
-              </p>
-            </div>
-            <ul className="docs-list">
-              <li>Starter: 1,000 requests per month</li>
-              <li>Developer: 250k requests per month</li>
-              <li>Enterprise: custom quotas and SLA options</li>
-            </ul>
-          </section>
-
           <section className="docs-card" id="errors">
             <span className="docs-kicker">Error responses</span>
-            <h2>Errors are predictable and machine-readable.</h2>
+            <h2>Errors are machine-readable with consistent codes.</h2>
+            <pre>{`{
+  "success": false,
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "Model openai/nonexistent not found"
+  }
+}`}</pre>
             <div className="error-grid">
               {errorRows.map((error) => (
                 <article key={error.code}>
@@ -181,16 +220,16 @@ Content-Type: application/json`}</pre>
           </section>
 
           <section className="docs-card launch-note">
-            <span className="docs-kicker">Launch status</span>
-            <h2>The docs are ready for early access conversations.</h2>
+            <span className="docs-kicker">Beta status</span>
+            <h2>The API is live. Data syncs daily from models.dev.</h2>
             <p>
-              This page defines the developer promise before the live backend is connected.
-              The next production step is to connect an API-key request form, store leads,
-              and wire the first real data provider.
+              The catalog endpoint is production-ready. Phase 2 will add API key
+              authentication, price history tracking, Chinese model supplements,
+              and cost estimation tools. Request early access to get notified.
             </p>
-            <Link className="button button-primary" href="/#contact">
-              Request API Access
-            </Link>
+            <a className="button button-primary" href="mailto:hello@tokenapi.biz">
+              Contact us
+            </a>
           </section>
         </div>
       </div>

@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TokenAPI | Token data API for global products",
+  title: "TokenAPI | AI Model Pricing API",
   description:
-    "TokenAPI is a multilingual token data API website for wallets, exchanges, AI agents, and analytics products.",
+    "TokenAPI indexes 4,900+ AI models from 60+ providers. Query pricing, context limits, capabilities, and compare models with a single REST call.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",

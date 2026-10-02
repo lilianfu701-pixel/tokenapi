@@ -1,133 +1,111 @@
 const navItems = [
-  { label: "Product", href: "#product" },
   { label: "API", href: "#api" },
   { label: "Use cases", href: "#use-cases" },
   { label: "Docs", href: "/docs" },
-  { label: "Languages", href: "#languages" },
   { label: "Pricing", href: "#pricing" },
   { label: "FAQ", href: "#faq" },
 ] as const;
 
 const stats = [
-  { value: "24/7", label: "market-ready token data" },
-  { value: "3", label: "launch languages" },
-  { value: "<120ms", label: "target edge response" },
+  { value: "4,900+", label: "AI models indexed" },
+  { value: "60+", label: "providers tracked" },
+  { value: "Daily", label: "price sync from models.dev" },
 ] as const;
 
 const capabilities = [
   {
-    title: "Token profiles",
+    title: "Model catalog",
     description:
-      "Resolve symbols, contracts, chains, logos, decimals, socials, and risk notes from one normalized endpoint.",
-    endpoint: "GET /v1/tokens/{chain}/{address}",
+      "Browse every commercial and open-weight AI model with pricing, context limits, capabilities, and modality support from one normalized endpoint.",
+    endpoint: "GET /api/v1/models",
   },
   {
-    title: "Live market snapshots",
+    title: "Provider directory",
     description:
-      "Surface price, liquidity, volume, market cap, and 24-hour movement for token pages and dashboards.",
-    endpoint: "GET /v1/markets/snapshot",
+      "List all AI providers with their model counts, SDK packages, API endpoints, and documentation links.",
+    endpoint: "GET /api/v1/providers",
   },
   {
-    title: "Holder and transfer signals",
+    title: "Side-by-side compare",
     description:
-      "Track ownership concentration, recent transfer velocity, and wallet-level movement without building indexers.",
-    endpoint: "GET /v1/signals/holders",
+      "Compare 2–10 models across price, context window, capabilities, and features in a single request.",
+    endpoint: "GET /api/v1/compare",
   },
   {
-    title: "Webhook alerts",
+    title: "Smart search",
     description:
-      "Push token events into trading tools, compliance workflows, AI agents, and internal operations channels.",
-    endpoint: "POST /v1/webhooks",
+      "Search models by name, provider, family, or capability flags like reasoning, tool calling, and multimodal support.",
+    endpoint: "GET /api/v1/search",
   },
 ] as const;
 
 const useCases = [
   {
-    title: "Wallets and portfolio apps",
+    title: "AI cost dashboards",
     description:
-      "Show users richer token pages with verified metadata, price movement, liquidity context, and risk labels.",
+      "Build internal tools that track token costs across providers so engineering teams can optimize spend.",
   },
   {
-    title: "Exchanges and launchpads",
+    title: "Model routers",
     description:
-      "Screen new listings, monitor market activity, and keep token pages consistent across regions.",
+      "Power intelligent routing logic that picks the cheapest model meeting capability requirements at runtime.",
+  },
+  {
+    title: "Developer tools",
+    description:
+      "Give developers structured model metadata for IDE extensions, CLI tools, and platform configuration UIs.",
   },
   {
     title: "AI agents",
     description:
-      "Give agents structured token context they can cite when answering portfolio, research, or market questions.",
-  },
-  {
-    title: "Analytics dashboards",
-    description:
-      "Build token monitors, sector boards, and compliance views without maintaining your own ingestion pipeline.",
-  },
-] as const;
-
-const languagePanels = [
-  {
-    label: "English",
-    title: "Token data infrastructure for products that need trusted market context.",
-    body: "Position TokenAPI for developers, founders, and product teams that need clean crypto market data without building data plumbing first.",
-  },
-  {
-    label: "简体中文",
-    title: "为钱包、交易工具和 Web3 产品提供可信的 Token 数据 API。",
-    body: "中文内容面向开发者、项目方和增长团队，清楚说明接口能力、接入方式、价格和常见问题。",
-  },
-  {
-    label: "Español",
-    title: "Datos de tokens listos para productos cripto globales.",
-    body: "La versión en español ayuda a llegar a equipos, comunidades y clientes de mercados hispanohablantes con un mensaje local.",
+      "Let agents query model pricing and capabilities to make autonomous decisions about which model to call.",
   },
 ] as const;
 
 const pricingTiers = [
   {
-    name: "Starter",
-    audience: "Indie builders",
-    price: "$0",
-    detail: "Prototype token search, metadata pages, and dashboards.",
-    features: ["1,000 requests / month", "Community chains", "Email support"],
+    name: "Open",
+    audience: "Builders",
+    price: "Free",
+    detail: "Full catalog access with no API key required during beta.",
+    features: ["All endpoints", "CORS enabled", "Community support"],
   },
   {
     name: "Developer",
     audience: "Production apps",
-    price: "$49",
-    detail: "For teams shipping wallets, trackers, and internal tools.",
-    features: ["250k requests / month", "Webhook alerts", "Priority support"],
+    price: "$9/mo",
+    detail: "Higher rate limits and priority data freshness for production use.",
+    features: ["10,000 req/day", "Price history API", "Email support"],
   },
   {
     name: "Enterprise",
-    audience: "High-volume platforms",
+    audience: "Platforms",
     price: "Custom",
-    detail: "Dedicated quotas, compliance workflows, and private chain coverage.",
-    features: ["Custom limits", "SLA options", "Private onboarding"],
+    detail: "Dedicated quotas, SLA guarantees, and custom data feeds.",
+    features: ["Unlimited requests", "Custom integrations", "Dedicated support"],
   },
-] as const;
-
-const integrationSteps = [
-  "Create an API key",
-  "Choose chains and endpoints",
-  "Test requests in preview",
-  "Deploy through GitHub and Vercel",
 ] as const;
 
 const faqItems = [
   {
-    question: "TokenAPI 现在是真实 API 吗？",
+    question: "Where does the data come from?",
     answer:
-      "当前网站先作为产品官网和需求收集入口上线。下一步可以接入真实数据源、API key、文档页和等待名单表单。",
+      "We sync daily from models.dev (MIT licensed, 7k+ GitHub stars) covering 4,900+ models from 60+ providers. Chinese model data is supplemented manually in Phase 2.",
   },
   {
-    question: "支持哪些链？",
+    question: "Is an API key required?",
     answer:
-      "网站文案预留了 Ethereum、Solana、Base、BNB Chain 等常见链的表达空间，真实接口上线前可以按你的数据源调整。",
+      "Not during beta. All /api/v1/* endpoints are open with CORS enabled. API key authentication will be added in Phase 2 for rate limiting and usage tracking.",
   },
   {
-    question: "Can this become a real developer portal?",
+    question: "How fresh is the pricing data?",
     answer:
-      "Yes. The current structure is ready for docs, authentication, API reference pages, and live examples once we add the backend.",
+      "The sync job runs daily via Vercel Cron. Pricing reflects the latest snapshot from models.dev, which tracks provider pricing pages in near real-time.",
+  },
+  {
+    question: "Can I use this commercially?",
+    answer:
+      "Yes. The upstream data source (models.dev) is MIT licensed. TokenAPI adds its own API layer, filtering, and normalization on top.",
   },
 ] as const;
 
@@ -135,13 +113,13 @@ export default function Home() {
   return (
     <main className="site-shell">
       <header className="topbar">
-        <a className="brand" href="#product" aria-label="TokenAPI home">
+        <a className="brand" href="#api" aria-label="TokenAPI home">
           <span className="brand-mark" aria-hidden="true">
             T
           </span>
           <span>
             <strong>TokenAPI</strong>
-            <small>Global token data</small>
+            <small>AI model pricing API</small>
           </span>
         </a>
 
@@ -156,36 +134,42 @@ export default function Home() {
 
       <section className="hero" id="product">
         <div className="hero-copy">
-          <span className="eyebrow">Token data API for global products</span>
-          <h1>Build crypto products with cleaner token context.</h1>
+          <span className="eyebrow">AI Model Pricing API</span>
+          <h1>Every AI model price in one API.</h1>
           <p>
-            TokenAPI gives wallets, exchanges, AI agents, and analytics teams a
-            structured way to read token profiles, market snapshots, holder
-            signals, and webhook alerts from one developer-friendly surface.
+            TokenAPI indexes 4,900+ AI models from 60+ providers. Query pricing,
+            context limits, capabilities, and compare models with a single REST
+            call. Built for cost dashboards, model routers, and developer tools.
           </p>
           <div className="hero-actions">
-            <a className="button button-primary" href="#contact">
-              Request API Access
+            <a className="button button-primary" href="/docs">
+              Read the docs
             </a>
-            <a className="button button-secondary" href="/docs">
-              Read developer docs
+            <a className="button button-secondary" href="#api">
+              See endpoints
             </a>
           </div>
         </div>
 
         <aside className="api-console" aria-label="Example API response">
           <div className="console-bar">
-            <span>tokenapi.biz</span>
+            <span>tokenapi.biz/api/v1</span>
             <span>200 OK</span>
           </div>
-          <pre>{`curl https://api.tokenapi.biz/v1/tokens/base/0x...
+          <pre>{`curl https://tokenapi.biz/api/v1/models/anthropic/claude-sonnet-5-5
 
 {
-  "symbol": "TOKEN",
-  "chain": "Base",
-  "priceUsd": "1.28",
-  "liquidity": "8.4M",
-  "risk": "verified"
+  "success": true,
+  "data": {
+    "id": "claude-sonnet-5-5",
+    "provider_id": "anthropic",
+    "name": "Claude Sonnet 5.5",
+    "reasoning": true,
+    "tool_call": true,
+    "context_limit": 1000000,
+    "cost_input": 3.00,
+    "cost_output": 15.00
+  }
 }`}</pre>
         </aside>
       </section>
@@ -201,11 +185,12 @@ export default function Home() {
 
       <section className="section split-section" id="api">
         <div className="section-intro">
-          <span className="eyebrow">API capabilities</span>
-          <h2>Everything a product needs before it can trust a token.</h2>
+          <span className="eyebrow">API endpoints</span>
+          <h2>Everything you need to compare AI model costs.</h2>
           <p>
-            Start with normalized token data, then add market context, holder
-            signals, and event-driven workflows as your product grows.
+            Start with the full catalog, filter by capability, compare prices
+            side by side, or search by name. All responses follow a consistent
+            JSON envelope with pagination.
           </p>
         </div>
 
@@ -223,7 +208,7 @@ export default function Home() {
       <section className="section" id="use-cases">
         <div className="section-heading">
           <span className="eyebrow">Use cases</span>
-          <h2>Useful for teams that need token data inside real workflows.</h2>
+          <h2>Built for teams that need AI pricing data in production.</h2>
         </div>
 
         <div className="use-case-grid">
@@ -236,27 +221,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section language-section" id="languages">
-        <div className="section-heading">
-          <span className="eyebrow">Multilingual reach</span>
-          <h2>One product story, written for three audiences from day one.</h2>
-        </div>
-
-        <div className="language-grid">
-          {languagePanels.map((panel) => (
-            <article key={panel.label} className="language-panel">
-              <span>{panel.label}</span>
-              <h3>{panel.title}</h3>
-              <p>{panel.body}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
       <section className="section pricing-section" id="pricing">
         <div className="section-heading">
           <span className="eyebrow">Pricing</span>
-          <h2>Simple tiers for prototypes, production apps, and platforms.</h2>
+          <h2>Free during beta. Simple tiers for production.</h2>
         </div>
 
         <div className="pricing-grid">
@@ -278,28 +246,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section integration-section">
-        <div className="integration-panel">
-          <div>
-            <span className="eyebrow">Integration path</span>
-            <h2>From first API key to production deployment.</h2>
-          </div>
-          <ol>
-            {integrationSteps.map((step) => (
-              <li key={step}>{step}</li>
-            ))}
-          </ol>
-          <p>
-            The website is maintained in GitHub and deployed through Vercel, so
-            every content update can be reviewed before it reaches production.
-          </p>
-        </div>
-      </section>
-
       <section className="section faq-section" id="faq">
         <div className="section-heading">
-          <span className="eyebrow">常见问题</span>
-          <h2>Clear answers before the API backend goes live.</h2>
+          <span className="eyebrow">FAQ</span>
+          <h2>Common questions about the API.</h2>
         </div>
 
         <div className="faq-list">
@@ -312,57 +262,29 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="contact-section access-section" id="contact">
+      <section className="contact-section" id="contact">
         <div className="access-copy">
-          <span className="eyebrow">Lista de espera</span>
-          <h2>Request API Access</h2>
+          <span className="eyebrow">Get started</span>
+          <h2>Start using the API today.</h2>
           <p>
-            Tell us what you want to build with TokenAPI. For now this static
-            form opens your email client; the next step can connect it to a real
-            database or CRM.
+            The API is free during beta with no key required. Have questions or
+            want to discuss enterprise access? Reach out by email.
           </p>
         </div>
-
-        <form
-          className="access-form"
-          action="/api/access-requests"
-          method="post"
-        >
-          <label>
-            Name
-            <input name="name" type="text" placeholder="Your name" required />
-          </label>
-          <label>
-            Email
-            <input name="email" type="email" placeholder="you@example.com" required />
-          </label>
-          <label>
-            Company or project
-            <input name="company" type="text" placeholder="Wallet, exchange, app, or fund" />
-          </label>
-          <label>
-            Use case
-            <textarea
-              name="use_case"
-              placeholder="Tell us which token data workflow you need first."
-              rows={4}
-              required
-            />
-          </label>
-          <button className="button button-primary" type="submit">
-            Send access request
-          </button>
-          <p className="form-note">
-            Requests are stored securely in the TokenAPI access queue. Prefer direct email? Write to{" "}
-            <a href="mailto:hello@tokenapi.biz">hello@tokenapi.biz</a>.
-          </p>
-        </form>
+        <div className="hero-actions">
+          <a className="button button-primary" href="/docs">
+            Read the docs
+          </a>
+          <a className="button button-secondary" href="mailto:hello@tokenapi.biz">
+            Contact us
+          </a>
+        </div>
       </section>
 
       <footer className="footer">
         <span>TokenAPI.biz</span>
-        <span>Built with GitHub and Vercel</span>
-        <span>English · 简体中文 · Español</span>
+        <span>Data from models.dev (MIT)</span>
+        <span>Built with Next.js + Vercel</span>
       </footer>
     </main>
   );
