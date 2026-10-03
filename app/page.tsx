@@ -1,180 +1,122 @@
-const navItems = [
-  { label: "API", href: "#api" },
-  { label: "Use cases", href: "#use-cases" },
-  { label: "Docs", href: "/docs" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "FAQ", href: "#faq" },
-] as const;
+import Link from "next/link";
+import { API_BASE, CONTACT_EMAIL, SiteFooter, SiteHeader } from "./_site/site-chrome";
 
 const stats = [
-  { value: "4,900+", label: "AI models indexed" },
-  { value: "60+", label: "providers tracked" },
-  { value: "Daily", label: "price sync from models.dev" },
+  { value: "1 key", label: "for every model we serve" },
+  { value: "3 APIs", label: "Chat Completions · Responses · Messages" },
+  { value: "Auto", label: "failover before the first token" },
+  { value: "Per token", label: "pay only for what you use" },
 ] as const;
 
-const capabilities = [
+const features = [
   {
-    title: "Model catalog",
-    description:
-      "Browse every commercial and open-weight AI model with pricing, context limits, capabilities, and modality support from one normalized endpoint.",
-    endpoint: "GET /api/v1/models",
+    kicker: "Drop-in",
+    title: "Works with the SDKs you already use",
+    description: "Point the official OpenAI or Anthropic SDK at our base URL. No new client library, no code rewrite.",
   },
   {
-    title: "Provider directory",
-    description:
-      "List all AI providers with their model counts, SDK packages, API endpoints, and documentation links.",
-    endpoint: "GET /api/v1/providers",
+    kicker: "Stable IDs",
+    title: "Model names that never break your code",
+    description: "You call a stable model ID such as premium-model. We keep it served by a strong backend, so your integration never has to change.",
   },
   {
-    title: "Side-by-side compare",
-    description:
-      "Compare 2–10 models across price, context window, capabilities, and features in a single request.",
-    endpoint: "GET /api/v1/compare",
+    kicker: "Resilience",
+    title: "Automatic failover",
+    description: "If a backend is slow, rate-limited or down, the request is retried on the next route before you receive a single token.",
   },
   {
-    title: "Smart search",
-    description:
-      "Search models by name, provider, family, or capability flags like reasoning, tool calling, and multimodal support.",
-    endpoint: "GET /api/v1/search",
-  },
-] as const;
-
-const useCases = [
-  {
-    title: "AI cost dashboards",
-    description:
-      "Build internal tools that track token costs across providers so engineering teams can optimize spend.",
+    kicker: "Streaming",
+    title: "Server-sent events everywhere",
+    description: "Token-by-token streaming on all three API formats, including tool calls and usage reporting.",
   },
   {
-    title: "Model routers",
-    description:
-      "Power intelligent routing logic that picks the cheapest model meeting capability requirements at runtime.",
+    kicker: "Billing",
+    title: "Exact, per-request accounting",
+    description: "Every request is metered in micro-dollars. A request reserves its maximum cost up front and settles to the real usage, so a balance is never overdrawn.",
   },
   {
-    title: "Developer tools",
-    description:
-      "Give developers structured model metadata for IDE extensions, CLI tools, and platform configuration UIs.",
-  },
-  {
-    title: "AI agents",
-    description:
-      "Let agents query model pricing and capabilities to make autonomous decisions about which model to call.",
-  },
-] as const;
-
-const pricingTiers = [
-  {
-    name: "Open",
-    audience: "Builders",
-    price: "Free",
-    detail: "Full catalog access with no API key required during beta.",
-    features: ["All endpoints", "CORS enabled", "Community support"],
-  },
-  {
-    name: "Developer",
-    audience: "Production apps",
-    price: "$9/mo",
-    detail: "Higher rate limits and priority data freshness for production use.",
-    features: ["10,000 req/day", "Price history API", "Email support"],
-  },
-  {
-    name: "Enterprise",
-    audience: "Platforms",
-    price: "Custom",
-    detail: "Dedicated quotas, SLA guarantees, and custom data feeds.",
-    features: ["Unlimited requests", "Custom integrations", "Dedicated support"],
+    kicker: "Controls",
+    title: "Limits per API key",
+    description: "Per-key rate limits, spend caps, expiry dates and model allow-lists keep each project and teammate in bounds.",
   },
 ] as const;
 
 const faqItems = [
   {
-    question: "Where does the data come from?",
+    question: "Which models can I use?",
     answer:
-      "We sync daily from models.dev (MIT licensed, 7k+ GitHub stars) covering 4,900+ models from 60+ providers. Chinese model data is supplemented manually in Phase 2.",
+      "The live list, with capabilities, context length and prices, is on the Models page. Each TokenAPI model is served by a leading upstream model provider; we may change the backend behind a model ID to keep quality and uptime high. Ask any model what it runs on and it will tell you.",
   },
   {
-    question: "Is an API key required?",
+    question: "Do I have to change my code?",
     answer:
-      "Not during beta. All /api/v1/* endpoints are open with CORS enabled. API key authentication will be added in Phase 2 for rate limiting and usage tracking.",
+      "Only the base URL and the API key. Requests and responses follow the OpenAI Chat Completions and Responses formats and the Anthropic Messages format.",
   },
   {
-    question: "How fresh is the pricing data?",
+    question: "What happens when a provider has an outage?",
     answer:
-      "The sync job runs daily via Vercel Cron. Pricing reflects the latest snapshot from models.dev, which tracks provider pricing pages in near real-time.",
+      "Models can have several backend routes. If the primary fails before it starts answering, the next route is tried automatically and you get a normal response.",
   },
   {
-    question: "Can I use this commercially?",
+    question: "How am I billed?",
     answer:
-      "Yes. The upstream data source (models.dev) is MIT licensed. TokenAPI adds its own API layer, filtering, and normalization on top.",
+      "Prepaid balance, per-token prices listed per model. Before a request runs we reserve its maximum possible cost, then charge the actual tokens and release the rest immediately.",
+  },
+  {
+    question: "Do you store my prompts?",
+    answer:
+      "No. We log request metadata needed for billing and support (model, token counts, cost, latency, status), not prompt or completion content. Requests are processed by the upstream provider serving the model.",
+  },
+  {
+    question: "How do I get an API key?",
+    answer: `We are onboarding customers manually during early access. Email ${CONTACT_EMAIL} and we will set up your account, balance and keys.`,
   },
 ] as const;
+
+const heroCode = `import OpenAI from "openai";
+
+const client = new OpenAI({
+  baseURL: "${API_BASE}",
+  apiKey: process.env.TOKENAPI_KEY,
+});
+
+const res = await client.chat.completions
+  .create({
+    model: "premium-model",
+    messages: [
+      { role: "user", content: "Hello!" },
+    ],
+  });`;
 
 export default function Home() {
   return (
     <main className="site-shell">
-      <header className="topbar">
-        <a className="brand" href="#api" aria-label="TokenAPI home">
-          <span className="brand-mark" aria-hidden="true">
-            T
-          </span>
-          <span>
-            <strong>TokenAPI</strong>
-            <small>AI model pricing API</small>
-          </span>
-        </a>
-
-        <nav className="topnav" aria-label="Primary navigation">
-          {navItems.map((item) => (
-            <a key={item.href} href={item.href}>
-              {item.label}
-            </a>
-          ))}
-        </nav>
-      </header>
+      <SiteHeader />
 
       <section className="hero" id="product">
         <div className="hero-copy">
-          <span className="eyebrow">AI Model Pricing API</span>
-          <h1>Every AI model price in one API.</h1>
+          <span className="eyebrow">Unified AI model API</span>
+          <h1>One API key. Top models. Zero rewrites.</h1>
           <p>
-            TokenAPI indexes 4,900+ AI models from 60+ providers. Query pricing,
-            context limits, capabilities, and compare models with a single REST
-            call. Built for cost dashboards, model routers, and developer tools.
+            TokenAPI is an OpenAI-compatible gateway. Call stable model IDs with the SDK you already use;
+            we route every request to a strong backend, fail over automatically and bill you per token.
           </p>
           <div className="hero-actions">
-            <a className="button button-primary" href="/docs">
-              Read the docs
-            </a>
-            <a className="button button-secondary" href="#api">
-              See endpoints
-            </a>
+            <a className="button button-primary" href={`mailto:${CONTACT_EMAIL}?subject=TokenAPI%20API%20key`}>Get an API key</a>
+            <Link className="button button-secondary" href="/models">Browse models</Link>
           </div>
         </div>
 
-        <aside className="api-console" aria-label="Example API response">
+        <aside className="api-console" aria-label="Example request">
           <div className="console-bar">
-            <span>tokenapi.biz/api/v1</span>
-            <span>200 OK</span>
+            <span>quickstart.ts</span>
+            <span>OpenAI SDK</span>
           </div>
-          <pre>{`curl https://tokenapi.biz/api/v1/models/anthropic/claude-sonnet-5-5
-
-{
-  "success": true,
-  "data": {
-    "id": "claude-sonnet-5-5",
-    "provider_id": "anthropic",
-    "name": "Claude Sonnet 5.5",
-    "reasoning": true,
-    "tool_call": true,
-    "context_limit": 1000000,
-    "cost_input": 3.00,
-    "cost_output": 15.00
-  }
-}`}</pre>
+          <pre>{heroCode}</pre>
         </aside>
       </section>
 
-      <section className="stats-band" aria-label="TokenAPI highlights">
+      <section className="stats-band stats-band-4" aria-label="TokenAPI highlights">
         {stats.map((stat) => (
           <article key={stat.label}>
             <strong>{stat.value}</strong>
@@ -183,39 +125,59 @@ export default function Home() {
         ))}
       </section>
 
-      <section className="section split-section" id="api">
+      <section className="section split-section" id="how">
         <div className="section-intro">
-          <span className="eyebrow">API endpoints</span>
-          <h2>Everything you need to compare AI model costs.</h2>
+          <span className="eyebrow">How it works</span>
+          <h2>Your code talks to one endpoint. We handle the rest.</h2>
           <p>
-            Start with the full catalog, filter by capability, compare prices
-            side by side, or search by name. All responses follow a consistent
-            JSON envelope with pagination.
+            A model ID is a stable product, not a hard-wired vendor model. Behind it sits a primary route and
+            ordered fallbacks. Upgrading or re-routing a model happens on our side; your requests stay exactly the same.
           </p>
         </div>
 
-        <div className="capability-grid">
-          {capabilities.map((capability) => (
-            <article key={capability.title} className="content-card">
-              <span className="endpoint">{capability.endpoint}</span>
-              <h3>{capability.title}</h3>
-              <p>{capability.description}</p>
-            </article>
-          ))}
-        </div>
+        <ol className="route-flow" aria-label="Request flow">
+          <li>
+            <span className="route-step">1</span>
+            <div>
+              <h3>Your app</h3>
+              <p><code>model: &quot;premium-model&quot;</code> to <code>/v1/chat/completions</code></p>
+            </div>
+          </li>
+          <li>
+            <span className="route-step">2</span>
+            <div>
+              <h3>TokenAPI gateway</h3>
+              <p>Authenticates the key, applies limits, reserves the maximum cost.</p>
+            </div>
+          </li>
+          <li>
+            <span className="route-step">3</span>
+            <div>
+              <h3>Routing</h3>
+              <p>Primary backend first; on failure, the next route takes over before any token is sent.</p>
+            </div>
+          </li>
+          <li>
+            <span className="route-step">4</span>
+            <div>
+              <h3>Response</h3>
+              <p>Streamed back in the format you called, then settled to the exact token usage.</p>
+            </div>
+          </li>
+        </ol>
       </section>
 
-      <section className="section" id="use-cases">
+      <section className="section" id="features">
         <div className="section-heading">
-          <span className="eyebrow">Use cases</span>
-          <h2>Built for teams that need AI pricing data in production.</h2>
+          <span className="eyebrow">Why TokenAPI</span>
+          <h2>Built for teams shipping AI to production.</h2>
         </div>
-
-        <div className="use-case-grid">
-          {useCases.map((item) => (
-            <article key={item.title} className="content-card">
-              <h3>{item.title}</h3>
-              <p>{item.description}</p>
+        <div className="capability-grid feature-grid">
+          {features.map((f) => (
+            <article key={f.title} className="content-card">
+              <span className="endpoint">{f.kicker}</span>
+              <h3>{f.title}</h3>
+              <p>{f.description}</p>
             </article>
           ))}
         </div>
@@ -224,34 +186,45 @@ export default function Home() {
       <section className="section pricing-section" id="pricing">
         <div className="section-heading">
           <span className="eyebrow">Pricing</span>
-          <h2>Free during beta. Simple tiers for production.</h2>
+          <h2>Pay as you go. No subscription.</h2>
         </div>
-
-        <div className="pricing-grid">
-          {pricingTiers.map((tier) => (
-            <article key={tier.name} className="pricing-card">
-              <div>
-                <span>{tier.audience}</span>
-                <h3>{tier.name}</h3>
-              </div>
-              <strong>{tier.price}</strong>
-              <p>{tier.detail}</p>
-              <ul>
-                {tier.features.map((feature) => (
-                  <li key={feature}>{feature}</li>
-                ))}
-              </ul>
-            </article>
-          ))}
+        <div className="pricing-grid pricing-grid-2">
+          <article className="pricing-card">
+            <div>
+              <span>Every model</span>
+              <h3>Per-token pricing</h3>
+            </div>
+            <strong>Prepaid</strong>
+            <p>Each model has its own input and output price per million tokens. Top up a balance and spend it on any model.</p>
+            <ul>
+              <li>Prices listed per model</li>
+              <li>Charged on actual tokens</li>
+              <li>Unused reservations released instantly</li>
+            </ul>
+            <Link className="button button-primary" href="/models">See model prices</Link>
+          </article>
+          <article className="pricing-card">
+            <div>
+              <span>Teams & volume</span>
+              <h3>Custom</h3>
+            </div>
+            <strong>Talk to us</strong>
+            <p>Higher rate limits, invoicing and volume pricing for production workloads.</p>
+            <ul>
+              <li>Custom rate limits</li>
+              <li>Multiple keys with spend caps</li>
+              <li>Priority support</li>
+            </ul>
+            <a className="button button-secondary" href={`mailto:${CONTACT_EMAIL}?subject=TokenAPI%20volume%20pricing`}>Contact sales</a>
+          </article>
         </div>
       </section>
 
       <section className="section faq-section" id="faq">
         <div className="section-heading">
           <span className="eyebrow">FAQ</span>
-          <h2>Common questions about the API.</h2>
+          <h2>Common questions.</h2>
         </div>
-
         <div className="faq-list">
           {faqItems.map((item) => (
             <article key={item.question} className="faq-item">
@@ -265,27 +238,16 @@ export default function Home() {
       <section className="contact-section" id="contact">
         <div className="access-copy">
           <span className="eyebrow">Get started</span>
-          <h2>Start using the API today.</h2>
-          <p>
-            The API is free during beta with no key required. Have questions or
-            want to discuss enterprise access? Reach out by email.
-          </p>
+          <h2>Get your API key.</h2>
+          <p>Early access is open. Tell us what you are building and we will set up your account, balance and keys.</p>
         </div>
         <div className="hero-actions">
-          <a className="button button-primary" href="/docs">
-            Read the docs
-          </a>
-          <a className="button button-secondary" href="mailto:hello@tokenapi.biz">
-            Contact us
-          </a>
+          <a className="button button-primary" href={`mailto:${CONTACT_EMAIL}?subject=TokenAPI%20API%20key`}>Request access</a>
+          <Link className="button button-secondary" href="/docs">Read the docs</Link>
         </div>
       </section>
 
-      <footer className="footer">
-        <span>TokenAPI.biz</span>
-        <span>Data from models.dev (MIT)</span>
-        <span>Built with Next.js + Vercel</span>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }

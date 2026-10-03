@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TokenAPI | AI Model Pricing API",
+  title: "TokenAPI | One API key for top AI models",
   description:
-    "TokenAPI indexes 4,900+ AI models from 60+ providers. Query pricing, context limits, capabilities, and compare models with a single REST call.",
+    "TokenAPI is an OpenAI-compatible AI model gateway: stable model IDs, automatic failover, streaming, and per-token billing. Works with the OpenAI and Anthropic SDKs.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
