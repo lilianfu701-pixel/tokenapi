@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://tokenapi.biz"),
   title: "TokenAPI | One API key for top AI models",
   description:
     "TokenAPI is an OpenAI-compatible AI model gateway: stable model IDs, automatic failover, streaming, and per-token billing. Works with the OpenAI and Anthropic SDKs.",

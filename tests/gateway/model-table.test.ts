@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { price } from "@/app/models/model-table";
+import { price } from "@/app/_site/model-table";
 
 describe("public price display", () => {
   it("never rounds: shows exactly what is billed", () => {

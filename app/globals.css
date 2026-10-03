@@ -1518,3 +1518,57 @@ li {
     grid-template-columns: 1fr;
   }
 }
+
+/* ===================================================== Chinese locale */
+.topnav .topnav-lang {
+  border-color: var(--border-strong);
+  color: var(--foreground);
+}
+
+[lang="zh-CN"] {
+  font-family: var(--font-geist-sans), "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+}
+
+/* CJK headlines are wider per glyph; keep them from dominating the hero. */
+[lang="zh-CN"] .hero h1 {
+  font-size: clamp(2.4rem, 5.2vw, 4.6rem);
+  line-height: 1.08;
+}
+
+[lang="zh-CN"] .section h2,
+[lang="zh-CN"] .contact-section h2 {
+  line-height: 1.12;
+}
+
+[lang="zh-CN"] .page-hero h1 {
+  line-height: 1.1;
+}
+
+/* Break Chinese headlines at punctuation, not mid-word; still wrap if a run is too long. */
+[lang="zh-CN"] h1,
+[lang="zh-CN"] h2 {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+[lang="zh-CN"] .hero h1 {
+  font-size: clamp(2.3rem, 4.4vw, 3.6rem);
+}
+
+/* The ch-based width caps are tuned for Latin text (one CJK glyph is about 2ch wide);
+   Chinese headings use authored line breaks instead. */
+[lang="zh-CN"] .hero h1,
+[lang="zh-CN"] .page-hero h1 {
+  max-width: none;
+}
+
+[lang="zh-CN"] h1,
+[lang="zh-CN"] h2 {
+  white-space: pre-line;
+}
+
+/* Monospace spacing looks broken with CJK glyphs. */
+[lang="zh-CN"] .stats-band strong {
+  font-family: var(--font-geist-sans), "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-weight: 700;
+}
