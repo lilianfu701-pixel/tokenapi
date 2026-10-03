@@ -2,7 +2,7 @@ import type { AliasRow, FallbackRow, ModelRow, ProviderRow, ResolvedAlias, Route
 
 /**
  * Pure routing: alias + fallback rows + provider/model catalog -> ordered usable routes.
- * Knows nothing about vendors; changing premium-model from Qwen to Gemini is a data change only.
+ * Knows nothing about vendors; changing tokenapi-pro from Qwen to Gemini is a data change only.
  */
 export function buildRoutes(
   alias: AliasRow,

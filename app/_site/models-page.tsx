@@ -1,40 +1,43 @@
 import { toPublicModel } from "@/lib/gateway/models";
 import { createNeonRepo } from "@/lib/gateway/repo";
-import { API_BASE, CONTACT_EMAIL, type Locale, htmlLang, rich } from "./i18n";
+import { API_BASE, type Locale, htmlLang, rich } from "./i18n";
+import { CATALOG_MODEL_COUNT, CATALOG_VENDOR_COUNT, ModelCatalog } from "./model-catalog";
 import { ModelTable, type PublicModel } from "./model-table";
 import { SiteFooter, SiteHeader } from "./site-chrome";
 
 export const MODELS_TEXT = {
   en: {
     meta: {
-      title: "Models & pricing | TokenAPI",
-      description: "TokenAPI models with capabilities, context length and per-token prices. One API key, OpenAI-compatible.",
+      title: "AI models & pricing | TokenAPI",
+      description:
+        "Mainstream AI models from OpenAI, Anthropic, Google, DeepSeek, Qwen, Kimi, GLM, Doubao and more, with context length and official per-token prices, plus TokenAPI's callable models.",
     },
     subtitle: "Models & pricing",
     eyebrow: "Models",
-    title: "Models and per-token prices",
-    lead: `Call any model below with the same API key and base URL \`${API_BASE}\`. Prices are in USD per million tokens and are charged on actual usage.`,
-    unavailable: "The model list is temporarily unavailable. Please try again shortly.",
-    emptyTitle: "Models are being added.",
-    emptyBody: `We are onboarding the first models now. Email [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL}) for early access.`,
+    title: "AI models and pricing",
+    lead: `${CATALOG_MODEL_COUNT} current models from ${CATALOG_VENDOR_COUNT} model makers, with context length, capabilities and official prices. TokenAPI models are called with one API key at \`${API_BASE}\`.`,
+    ownTitle: "TokenAPI models",
+    ownBody: "Callable now with your TokenAPI key. Prices are USD per million tokens, charged on actual usage.",
+    unavailable: "TokenAPI's own model list is temporarily unavailable. Please try again shortly.",
     jsonKicker: "Programmatic access",
-    jsonTitle: "The same list is available as JSON.",
+    jsonTitle: "TokenAPI models are also available as JSON.",
     jsonBody: "Use the `id` as the `model` parameter. See the [docs](/docs) for request examples.",
   },
   zh: {
     meta: {
-      title: "模型与价格 | TokenAPI",
-      description: "TokenAPI 全部模型的能力、上下文长度与按 token 价格。一个 API Key，兼容 OpenAI。",
+      title: "主流大模型与价格 | TokenAPI",
+      description:
+        "汇总 OpenAI、Anthropic、Google、DeepSeek、通义千问、Kimi、智谱 GLM、豆包等主流大模型的上下文长度与官方价格，以及 TokenAPI 可直接调用的模型。",
     },
     subtitle: "模型与价格",
     eyebrow: "模型",
-    title: "模型与按 token 价格",
-    lead: `下列所有模型都使用同一个 API Key 和 base URL \`${API_BASE}\` 调用。价格单位为美元 / 百万 token，按实际用量计费。`,
-    unavailable: "模型列表暂时无法加载，请稍后再试。",
-    emptyTitle: "模型正在陆续上线。",
-    emptyBody: `首批模型正在接入中。申请抢先体验请发邮件至 [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL})。`,
+    title: "主流大模型与价格",
+    lead: `收录 ${CATALOG_VENDOR_COUNT} 家厂商的 ${CATALOG_MODEL_COUNT} 个最新模型，列出上下文长度、能力和官方价格。TokenAPI 模型使用同一个 API Key 通过 \`${API_BASE}\` 调用。`,
+    ownTitle: "TokenAPI 可调用模型",
+    ownBody: "使用 TokenAPI 的 Key 即可直接调用。价格单位为美元 / 百万 token，按实际用量计费。",
+    unavailable: "TokenAPI 模型列表暂时无法加载，请稍后再试。",
     jsonKicker: "接口获取",
-    jsonTitle: "同样的列表也可通过 JSON 接口获取。",
+    jsonTitle: "TokenAPI 模型也可通过 JSON 接口获取。",
     jsonBody: "把 `id` 作为 `model` 参数传入即可。请求示例见[文档](/docs)。",
   },
 } as const;
@@ -64,14 +67,17 @@ export async function ModelsPage({ locale }: { locale: Locale }) {
 
       {failed ? (
         <p className="notice notice-error" role="alert">{t.unavailable}</p>
-      ) : models.length === 0 ? (
-        <section className="notice">
-          <h2>{t.emptyTitle}</h2>
-          <p>{rich(t.emptyBody, locale)}</p>
+      ) : models.length > 0 ? (
+        <section className="own-models" aria-labelledby="own-title">
+          <div className="catalog-intro">
+            <h2 id="own-title">{t.ownTitle}</h2>
+            <p>{t.ownBody}</p>
+          </div>
+          <ModelTable models={models} locale={locale} />
         </section>
-      ) : (
-        <ModelTable models={models} locale={locale} />
-      )}
+      ) : null}
+
+      <ModelCatalog locale={locale} />
 
       <section className="docs-card models-api-note">
         <span className="docs-kicker">{t.jsonKicker}</span>

@@ -7,7 +7,7 @@
 
 ```
 Client (OpenAI SDK / Anthropic SDK / curl)
-  │  POST /v1/chat/completions | /v1/responses | /v1/messages   model="premium-model"
+  │  POST /v1/chat/completions | /v1/responses | /v1/messages   model="tokenapi-pro"
   ▼
 Inbound format  (formats/chat.ts · responses.ts · anthropic.ts)  → 统一转成内部 Chat 格式
   ▼
@@ -25,7 +25,7 @@ pipeline.ts
             + gateway_settle_credit()(多退少补,写流水)
 ```
 
-**把 `premium-model` 从 Qwen 换到 Gemini** = 后台「Model aliases → Edit / re-route」选另一条路由。
+**把 `tokenapi-pro` 从 Qwen 换到 Gemini** = 后台「Model aliases → Edit / re-route」选另一条路由。
 一条 UPDATE,≤10 秒生效(实例内别名缓存),客户端零改动;审计日志记录 `reroute: qwen/qwen3.7-flash → gemini/…`。
 
 ## 数据模型(`scripts/setup-gateway-db.sql`)
@@ -129,7 +129,7 @@ provider、real_model、api_base、上游密钥只在后台可见。正常回答
 
 ```ts
 const client = new OpenAI({ baseURL: "https://tokenapi.biz/v1", apiKey: "sk-tk-…" });
-await client.chat.completions.create({ model: "premium-model", messages: [{ role: "user", content: "hi" }] });
+await client.chat.completions.create({ model: "tokenapi-pro", messages: [{ role: "user", content: "hi" }] });
 ```
 
 ## 测试

@@ -29,7 +29,7 @@ const client = new OpenAI({
 
 const res = await client.chat.completions
   .create({
-    model: "premium-model",
+    model: "tokenapi-pro",
     messages: [
       { role: "user", content: "Hello!" },
     ],
@@ -60,7 +60,7 @@ export const HOME: Record<Locale, HomeContent> = {
       body:
         "A model ID is a stable product, not a hard-wired vendor model. Behind it sits a primary route and ordered fallbacks. Upgrading or re-routing a model happens on our side; your requests stay exactly the same.",
       steps: [
-        { title: "Your app", body: '`model: "premium-model"` to `/v1/chat/completions`' },
+        { title: "Your app", body: '`model: "tokenapi-pro"` to `/v1/chat/completions`' },
         { title: "TokenAPI gateway", body: "Authenticates the key, applies limits, reserves the maximum cost." },
         { title: "Routing", body: "Primary backend first; on failure, the next route takes over before any token is sent." },
         { title: "Response", body: "Streamed back in the format you called, then settled to the exact token usage." },
@@ -71,7 +71,7 @@ export const HOME: Record<Locale, HomeContent> = {
       title: "Built for teams shipping AI to production.",
       items: [
         { kicker: "Drop-in", title: "Works with the SDKs you already use", body: "Point the official OpenAI or Anthropic SDK at our base URL. No new client library, no code rewrite." },
-        { kicker: "Stable IDs", title: "Model names that never break your code", body: "You call a stable model ID such as premium-model. We keep it served by a strong backend, so your integration never has to change." },
+        { kicker: "Stable IDs", title: "Model names that never break your code", body: "You call a stable model ID such as tokenapi-pro. We keep it served by a strong backend, so your integration never has to change." },
         { kicker: "Resilience", title: "Automatic failover", body: "If a backend is slow, rate-limited or down, the request is retried on the next route before you receive a single token." },
         { kicker: "Streaming", title: "Server-sent events everywhere", body: "Token-by-token streaming on all three API formats, including tool calls and usage reporting." },
         { kicker: "Billing", title: "Exact, per-request accounting", body: "Every request is metered in micro-dollars. A request reserves its maximum cost up front and settles to the real usage, so a balance is never overdrawn." },
@@ -144,7 +144,7 @@ export const HOME: Record<Locale, HomeContent> = {
       body:
         "模型 ID 是一个稳定的产品，而不是写死的某家厂商模型。每个模型背后都有主路由和按优先级排列的备用路由。模型升级或切换后端都在我们这边完成，你的请求无需任何改动。",
       steps: [
-        { title: "你的应用", body: '向 `/v1/chat/completions` 发送 `model: "premium-model"`' },
+        { title: "你的应用", body: '向 `/v1/chat/completions` 发送 `model: "tokenapi-pro"`' },
         { title: "TokenAPI 网关", body: "校验 Key、执行限额，并预先冻结本次请求的最高费用。" },
         { title: "智能路由", body: "优先调用主路由；一旦失败，在返回任何 token 之前自动切换到下一条路由。" },
         { title: "返回结果", body: "按你调用的格式流式返回，结束后按实际 token 用量结算。" },
@@ -155,7 +155,7 @@ export const HOME: Record<Locale, HomeContent> = {
       title: "为生产级 AI 应用而建。",
       items: [
         { kicker: "即插即用", title: "直接用现有 SDK", body: "把 OpenAI 或 Anthropic 官方 SDK 的 base URL 指向我们即可，无需新的客户端库，也无需重写代码。" },
-        { kicker: "稳定 ID", title: "模型名称永不失效", body: "你调用的是 premium-model 这样的稳定模型 ID，我们负责让它始终由优质后端提供服务，你的集成永远不用改。" },
+        { kicker: "稳定 ID", title: "模型名称永不失效", body: "你调用的是 tokenapi-pro 这样的稳定模型 ID，我们负责让它始终由优质后端提供服务，你的集成永远不用改。" },
         { kicker: "高可用", title: "自动故障切换", body: "后端响应慢、被限流或宕机时，请求会在你收到第一个 token 之前自动转到下一条路由。" },
         { kicker: "流式输出", title: "全面支持 SSE", body: "三种 API 格式都支持逐 token 流式返回，包括工具调用和用量统计。" },
         { kicker: "计费", title: "每次请求精确记账", body: "按微美元精确计量。请求前先冻结最高可能费用，结束后按实际用量结算，账户余额绝不会被透支。" },

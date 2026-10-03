@@ -32,7 +32,7 @@ function KeySelect({ keys, name, value }: { keys: Row[]; name: string; value?: u
 function AliasForm({ a, models, keys }: { a?: Row; models: Row[]; keys: Row[] }) {
   return (
     <form action={saveAlias} className="adm-form">
-      <label>Alias (public model id)<input name="alias" defaultValue={a ? String(a.alias) : ""} readOnly={Boolean(a)} required placeholder="premium-model" /></label>
+      <label>Alias (public model id)<input name="alias" defaultValue={a ? String(a.alias) : ""} readOnly={Boolean(a)} required placeholder="tokenapi-pro" /></label>
       <label>Display name<input name="display_name" defaultValue={a ? String(a.display_name) : ""} required placeholder="TokenAPI Pro" /></label>
       <label className="is-wide">Routes to<RouteSelect models={models} name="route" value={a ? `${a.provider}::${a.provider_model}` : undefined} /></label>
       <label className="is-wide">Description<input name="description" defaultValue={a?.description ? String(a.description) : ""} /></label>

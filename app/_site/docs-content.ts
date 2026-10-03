@@ -7,7 +7,7 @@ export const DOC_CODE = {
   -H "Authorization: Bearer $TOKENAPI_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "model": "premium-model",
+    "model": "tokenapi-pro",
     "messages": [{ "role": "user", "content": "Hello!" }]
   }'`,
   node: `import OpenAI from "openai";
@@ -18,7 +18,7 @@ const client = new OpenAI({
 });
 
 const res = await client.chat.completions.create({
-  model: "premium-model",
+  model: "tokenapi-pro",
   messages: [{ role: "user", content: "Hello!" }],
 });
 console.log(res.choices[0].message.content);`,
@@ -28,12 +28,12 @@ from openai import OpenAI
 client = OpenAI(base_url="${API_BASE}", api_key=os.environ["TOKENAPI_KEY"])
 
 res = client.chat.completions.create(
-    model="premium-model",
+    model="tokenapi-pro",
     messages=[{"role": "user", "content": "Hello!"}],
 )
 print(res.choices[0].message.content)`,
   stream: `const stream = await client.chat.completions.create({
-  model: "premium-model",
+  model: "tokenapi-pro",
   messages: [{ role: "user", content: "Write a haiku." }],
   stream: true,
   stream_options: { include_usage: true }, // final chunk carries usage
@@ -43,7 +43,7 @@ for await (const chunk of stream) {
   process.stdout.write(chunk.choices[0]?.delta?.content ?? "");
 }`,
   responses: `const res = await client.responses.create({
-  model: "premium-model",
+  model: "tokenapi-pro",
   instructions: "Answer in one sentence.",
   input: "What is a token?",
 });
@@ -56,7 +56,7 @@ const anthropic = new Anthropic({
 });
 
 const msg = await anthropic.messages.create({
-  model: "premium-model",
+  model: "tokenapi-pro",
   max_tokens: 1024,
   messages: [{ role: "user", content: "Hello!" }],
 });`,
@@ -64,7 +64,7 @@ const msg = await anthropic.messages.create({
   "object": "list",
   "data": [
     {
-      "id": "premium-model",
+      "id": "tokenapi-pro",
       "object": "model",
       "owned_by": "tokenapi",
       "display_name": "TokenAPI Pro",

@@ -1,7 +1,7 @@
 // Public alias / display names must not borrow another vendor's model brand.
 // e.g. a Qwen-backed alias named "Opus ..." or "GPT ..." would mislead customers
 // about what they are paying for (and uses third-party trademarks).
-// Generic product names ("premium-model", "TokenAPI Pro") are always fine.
+// Generic product names ("tokenapi-pro", "TokenAPI Pro") are always fine.
 
 const VENDOR_BRAND_TERMS: Record<string, string[]> = {
   anthropic: ["claude", "anthropic", "opus", "sonnet", "haiku"],
