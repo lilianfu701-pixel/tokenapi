@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Script from "next/script";
 import { CONTACT_EMAIL, LOCALES, type Locale, localePath } from "./i18n";
+import { getLegal, legalPagesPublished, legalPath } from "./legal";
 import { getMessages } from "./locales";
 
 export { API_BASE, CONTACT_EMAIL } from "./i18n";
@@ -99,6 +100,7 @@ export function SiteHeader({ locale = "en", subtitle, path = "/" }: HeaderProps)
 
 export function SiteFooter({ locale = "en" }: { locale?: Locale }) {
   const t = getMessages(locale).chrome;
+  const legal = getLegal(locale).texts.chrome;
   return (
     <footer className="footer">
       <span>TokenAPI.biz</span>
@@ -107,6 +109,11 @@ export function SiteFooter({ locale = "en" }: { locale?: Locale }) {
         <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
       </span>
       <span>{t.footerTag}</span>
+      {legalPagesPublished() ? <nav className="footer-legal" aria-label={legal.footerLabel}>
+        {(["terms", "privacy", "acceptableUse", "refund", "contact"] as const).map((key) => (
+          <Link key={key} href={localePath(locale, legalPath(key))}>{legal.nav[key]}</Link>
+        ))}
+      </nav> : null}
       <CloudflareAnalytics />
     </footer>
   );

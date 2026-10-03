@@ -15,10 +15,10 @@ export const SITE_URL = "https://tokenapi.biz";
  *   [label](/path)    -> locale-aware internal link, or external/mailto link
  */
 export function rich(text: string, locale: Locale): ReactNode[] {
-  const parts = text.split(/(`[^`]+`|\[[^\]]+\]\([^)]+\))/g).filter(Boolean);
+  const parts = text.split(/(`[^`]+`|\[[^\]]+\]\((?:\/|#|https?:|mailto:)[^)]*\))/g).filter(Boolean);
   return parts.map((part, i) => {
     if (part.startsWith("`") && part.endsWith("`")) return <code key={i}>{part.slice(1, -1)}</code>;
-    const link = /^\[([^\]]+)\]\(([^)]+)\)$/.exec(part);
+    const link = /^\[([^\]]+)\]\(((?:\/|#|https?:|mailto:)[^)]*)\)$/.exec(part);
     if (link) {
       const [, label, href] = link;
       return href.startsWith("/")
