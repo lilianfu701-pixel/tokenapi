@@ -32,7 +32,6 @@ export const CATALOG_VENDOR_COUNT = VENDORS.length;
 const T = {
   en: {
     title: "Mainstream model catalog",
-    note: `Official model names and official list prices from ${CATALOG_VENDOR_COUNT} model makers, for comparison and planning. Listing here does not mean a model is callable through TokenAPI; call the \`tokenapi-*\` models above, or [contact us](mailto:hello@tokenapi.biz) to request a specific model.`,
     source: `Source: [models.dev](https://models.dev) (MIT), snapshot ${catalog.generated}. Prices are USD per million tokens; the vendor's own pricing page is authoritative.`,
     nav: "Jump to vendor",
     models: (n: number) => `${n} models`,
@@ -41,7 +40,6 @@ const T = {
   },
   zh: {
     title: "主流大模型目录",
-    note: `汇总 ${CATALOG_VENDOR_COUNT} 家模型厂商的官方型号与官方定价，供选型和比价参考。列在这里不代表可以通过 TokenAPI 直接调用；请调用上方的 \`tokenapi-*\` 模型，或[联系我们](mailto:hello@tokenapi.biz)申请接入指定模型。`,
     source: `数据来源：[models.dev](https://models.dev)（MIT 协议），快照日期 ${catalog.generated}。价格单位为美元 / 百万 token，以各厂商官网为准。`,
     nav: "按厂商跳转",
     models: (n: number) => `${n} 个模型`,
@@ -62,7 +60,6 @@ export function ModelCatalog({ locale }: { locale: Locale }) {
     <section className="catalog" id="catalog" aria-labelledby="catalog-title">
       <div className="catalog-intro">
         <h2 id="catalog-title">{t.title}</h2>
-        <p>{rich(t.note, locale)}</p>
       </div>
 
       <nav className="catalog-nav" aria-label={t.nav}>
