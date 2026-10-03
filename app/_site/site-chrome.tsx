@@ -1,8 +1,23 @@
 import Link from "next/link";
+import Script from "next/script";
 import { CONTACT_EMAIL, LOCALES, type Locale, localePath } from "./i18n";
 import { getMessages } from "./locales";
 
 export { API_BASE, CONTACT_EMAIL } from "./i18n";
+
+// Cloudflare Web Analytics (cookieless). The token is a public site identifier, not a secret.
+// tokenapi.biz is DNS-only on Cloudflare (served by Vercel), so the beacon must be in the page.
+const CF_ANALYTICS_TOKEN = "0ef12dea78d84f29a32073acc5776005";
+
+function CloudflareAnalytics() {
+  return (
+    <Script
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon={JSON.stringify({ token: CF_ANALYTICS_TOKEN })}
+      strategy="afterInteractive"
+    />
+  );
+}
 
 export function ctaMailto(locale: Locale) {
   return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(getMessages(locale).chrome.ctaSubject)}`;
@@ -92,6 +107,7 @@ export function SiteFooter({ locale = "en" }: { locale?: Locale }) {
         <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
       </span>
       <span>{t.footerTag}</span>
+      <CloudflareAnalytics />
     </footer>
   );
 }
