@@ -1,28 +1,10 @@
 import type { toPublicModel } from "@/lib/gateway/models";
 import type { Locale } from "./i18n";
+import { getMessages } from "./locales";
 
 export type PublicModel = ReturnType<typeof toPublicModel>;
 
-const LABELS = {
-  en: {
-    list: "Available models",
-    model: "Model",
-    capabilities: "Capabilities",
-    context: "Context",
-    input: "Input / 1M",
-    output: "Output / 1M",
-    caps: { streaming: "Streaming", tools: "Tool calling", vision: "Vision", json_output: "JSON output", reasoning: "Reasoning" },
-  },
-  zh: {
-    list: "可用模型",
-    model: "模型",
-    capabilities: "能力",
-    context: "上下文",
-    input: "输入 / 百万",
-    output: "输出 / 百万",
-    caps: { streaming: "流式输出", tools: "工具调用", vision: "图像理解", json_output: "JSON 输出", reasoning: "深度推理" },
-  },
-} as const;
+
 
 /** Exact price (no rounding): what is shown is what is billed. */
 export function price(perMillion: number | undefined) {
@@ -38,7 +20,7 @@ function context(n: number | null) {
 }
 
 export function ModelTable({ models, locale = "en" }: { models: PublicModel[]; locale?: Locale }) {
-  const t = LABELS[locale];
+  const t = getMessages(locale).table;
   const capLabel = (c: string) => (t.caps as Record<string, string>)[c] ?? c;
   return (
     <section className="model-list" aria-label={t.list}>

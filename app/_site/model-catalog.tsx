@@ -1,5 +1,6 @@
 import catalog from "./model-catalog.json";
 import { type Locale, rich } from "./i18n";
+import { fmt, getMessages } from "./locales";
 import { price } from "./model-table";
 
 // Reference catalog of first-party models with official list prices (snapshot of models.dev,
@@ -29,24 +30,19 @@ const VENDORS = catalog.vendors as CatalogVendor[];
 export const CATALOG_MODEL_COUNT = VENDORS.reduce((n, v) => n + v.models.length, 0);
 export const CATALOG_VENDOR_COUNT = VENDORS.length;
 
-const T = {
-  en: {
-    title: "Mainstream model catalog",
-    source: `Source: [models.dev](https://models.dev) (MIT), snapshot ${catalog.generated}. Prices are USD per million tokens; the vendor's own pricing page is authoritative.`,
-    nav: "Jump to vendor",
-    models: (n: number) => `${n} models`,
-    head: ["Model", "Capabilities", "Context", "Input / 1M", "Output / 1M", "Released"],
-    caps: { reasoning: "Reasoning", tools: "Tool calling", vision: "Vision", openWeights: "Open weights" },
-  },
-  zh: {
-    title: "主流大模型目录",
-    source: `数据来源：[models.dev](https://models.dev)（MIT 协议），快照日期 ${catalog.generated}。价格单位为美元 / 百万 token，以各厂商官网为准。`,
-    nav: "按厂商跳转",
-    models: (n: number) => `${n} 个模型`,
-    head: ["模型", "能力", "上下文", "输入 / 百万", "输出 / 百万", "发布"],
-    caps: { reasoning: "深度推理", tools: "工具调用", vision: "图像理解", openWeights: "开源权重" },
-  },
-} as const;
+// Traditional-Chinese vendor names; other non-Chinese locales use the English names.
+const ZH_TW_VENDOR: Record<string, string> = {
+  alibaba: "阿里 通義千問",
+  zhipuai: "智譜 GLM",
+  volcengine: "字節跳動 豆包（火山引擎）",
+  stepfun: "階躍星辰",
+};
+
+function vendorName(v: CatalogVendor, locale: Locale) {
+  if (locale === "zh") return v.zh;
+  if (locale === "zh-tw") return ZH_TW_VENDOR[v.id] ?? v.zh;
+  return v.en;
+}
 
 function context(n: number | null) {
   if (!n) return "—";
@@ -54,7 +50,7 @@ function context(n: number | null) {
 }
 
 export function ModelCatalog({ locale }: { locale: Locale }) {
-  const t = T[locale];
+  const t = getMessages(locale).catalog;
   const capKeys = ["reasoning", "tools", "vision", "openWeights"] as const;
   return (
     <section className="catalog" id="catalog" aria-labelledby="catalog-title">
@@ -65,16 +61,16 @@ export function ModelCatalog({ locale }: { locale: Locale }) {
       <nav className="catalog-nav" aria-label={t.nav}>
         {VENDORS.map((v) => (
           <a key={v.id} href={`#vendor-${v.id}`}>
-            {v[locale]} <span>{v.models.length}</span>
+            {vendorName(v, locale)} <span>{v.models.length}</span>
           </a>
         ))}
       </nav>
 
       {VENDORS.map((v) => (
-        <section key={v.id} id={`vendor-${v.id}`} className="catalog-vendor" aria-label={v[locale]}>
+        <section key={v.id} id={`vendor-${v.id}`} className="catalog-vendor" aria-label={vendorName(v, locale)}>
           <header>
-            <h3>{v[locale]}</h3>
-            <span>{t.models(v.models.length)}</span>
+            <h3>{vendorName(v, locale)}</h3>
+            <span>{fmt(t.models, { n: v.models.length })}</span>
           </header>
           <div className="catalog-row catalog-row-head" aria-hidden="true">
             {t.head.map((h) => <span key={h}>{h}</span>)}
@@ -97,7 +93,7 @@ export function ModelCatalog({ locale }: { locale: Locale }) {
         </section>
       ))}
 
-      <p className="catalog-source">{rich(t.source, locale)}</p>
+      <p className="catalog-source">{rich(fmt(t.source, { date: catalog.generated }), locale)}</p>
     </section>
   );
 }

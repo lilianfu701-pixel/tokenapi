@@ -1,12 +1,13 @@
 import Link from "next/link";
-import { HOME, heroCode } from "./home-content";
+import { heroCode } from "./home-content";
 import { CONTACT_EMAIL, type Locale, htmlLang, localePath, rich } from "./i18n";
+import { fmt, getMessages } from "./locales";
 import { SiteFooter, SiteHeader, ctaMailto } from "./site-chrome";
 
 export function HomePage({ locale }: { locale: Locale }) {
-  const t = HOME[locale];
+  const t = getMessages(locale).home;
   return (
-    <main className="site-shell" lang={htmlLang[locale]}>
+    <main className="site-shell" lang={htmlLang(locale)}>
       <SiteHeader locale={locale} path="/" />
 
       <section className="hero" id="product">
@@ -108,7 +109,7 @@ export function HomePage({ locale }: { locale: Locale }) {
           {t.faq.items.map((item) => (
             <article key={item.q} className="faq-item">
               <h3>{item.q}</h3>
-              <p>{item.a}</p>
+              <p>{fmt(item.a, { email: CONTACT_EMAIL })}</p>
             </article>
           ))}
         </div>

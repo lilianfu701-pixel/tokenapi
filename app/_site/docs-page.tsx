@@ -1,4 +1,4 @@
-import { DOCS, DOC_CODE, type DocSection } from "./docs-content";
+import { DOC_CODE, type DocSection, type DocsContent, getDocs } from "./docs-content";
 import { CONTACT_EMAIL, type Locale, htmlLang, rich } from "./i18n";
 import { SiteFooter, SiteHeader } from "./site-chrome";
 
@@ -11,8 +11,7 @@ function Code({ label, children }: { label: string; children: string }) {
   );
 }
 
-function Section({ section, locale }: { section: DocSection; locale: Locale }) {
-  const t = DOCS[locale];
+function Section({ section, locale, t }: { section: DocSection; locale: Locale; t: DocsContent }) {
   return (
     <section className={`docs-card${section.note ? " launch-note" : ""}`} id={section.id}>
       <span className="docs-kicker">{section.kicker}</span>
@@ -62,9 +61,9 @@ function Section({ section, locale }: { section: DocSection; locale: Locale }) {
 }
 
 export function DocsPage({ locale }: { locale: Locale }) {
-  const t = DOCS[locale];
+  const t = getDocs(locale);
   return (
-    <main className="site-shell" lang={htmlLang[locale]}>
+    <main className="site-shell" lang={htmlLang(locale)}>
       <SiteHeader locale={locale} subtitle={t.subtitle} path="/docs" />
 
       <section className="page-hero" id="overview">
@@ -78,7 +77,7 @@ export function DocsPage({ locale }: { locale: Locale }) {
           {t.sections.map((s) => <a key={s.id} href={`#${s.id}`}>{s.nav}</a>)}
         </aside>
         <div className="docs-content">
-          {t.sections.map((s) => <Section key={s.id} section={s} locale={locale} />)}
+          {t.sections.map((s) => <Section key={s.id} section={s} locale={locale} t={t} />)}
         </div>
       </div>
 

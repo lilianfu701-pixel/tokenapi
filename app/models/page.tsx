@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { alternates } from "../_site/i18n";
-import { MODELS_TEXT, ModelsPage } from "../_site/models-page";
+import { getMessages } from "../_site/locales";
+import { ModelsPage } from "../_site/models-page";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = { ...MODELS_TEXT.en.meta, alternates: alternates("en", "/models") };
+export const metadata: Metadata = { ...getMessages("en").models.meta, alternates: alternates("en", "/models") };
 
 export default function Page() {
   return <ModelsPage locale="en" />;
