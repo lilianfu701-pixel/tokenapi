@@ -19,7 +19,7 @@ export const pt: Messages = {
     eyebrow: "API unificada de modelos de IA",
     title: "Uma API key. Os melhores modelos. Sem reescrever código.",
     lead:
-      "TokenAPI é um gateway compatível com OpenAI. Chame IDs de modelo estáveis com o SDK que você já usa; roteamos cada requisição para um backend forte, trocamos de rota automaticamente em caso de falha e cobramos por token.",
+      "TokenAPI é um gateway compatível com OpenAI. Chame IDs de modelo estáveis com o SDK que você já usa; roteamos cada requisição para um backend robusto, trocamos de rota automaticamente em caso de falha e cobramos por token.",
     ctaPrimary: "Obter uma API key",
     ctaSecondary: "Ver modelos",
     stats: [
@@ -37,7 +37,7 @@ export const pt: Messages = {
         { title: "Seu app", body: '`model: "tokenapi-pro"` para `/v1/chat/completions`' },
         { title: "Gateway TokenAPI", body: "Autentica a key, aplica os limites e reserva o custo máximo." },
         { title: "Roteamento", body: "Primeiro o backend principal; se falhar, a próxima rota assume antes de qualquer token ser enviado." },
-        { title: "Resposta", body: "Retornada em streaming no formato chamado e liquidada pelo uso real de tokens." },
+        { title: "Resposta", body: "Retornada em streaming no formato solicitado e liquidada pelo uso real de tokens." },
       ],
     },
     features: {
@@ -45,10 +45,10 @@ export const pt: Messages = {
       title: "Feito para equipes que levam IA para produção.",
       items: [
         { kicker: "Plug and play", title: "Funciona com os SDKs que você já usa", body: "Aponte o SDK oficial da OpenAI ou da Anthropic para a nossa base URL. Sem nova biblioteca cliente, sem reescrever código." },
-        { kicker: "IDs estáveis", title: "Nomes de modelo que nunca quebram seu código", body: "Você chama um ID estável como tokenapi-pro. Mantemos ele servido por um backend forte, então sua integração nunca precisa mudar." },
+        { kicker: "IDs estáveis", title: "Nomes de modelo que nunca quebram seu código", body: "Você chama um ID estável como tokenapi-pro. Mantemos ele servido por um backend robusto, então sua integração nunca precisa mudar." },
         { kicker: "Resiliência", title: "Failover automático", body: "Se um backend estiver lento, com limite de taxa ou fora do ar, a requisição é refeita na próxima rota antes de você receber um único token." },
         { kicker: "Streaming", title: "Server-sent events em toda parte", body: "Streaming token a token nos três formatos de API, incluindo chamadas de ferramentas e relatório de uso." },
-        { kicker: "Cobrança", title: "Contabilidade exata por requisição", body: "Cada requisição é medida em microdólares. O custo máximo é reservado antecipadamente e liquidado pelo uso real, então o saldo nunca fica negativo." },
+        { kicker: "Cobrança", title: "Contabilidade exata por requisição", body: "Cada requisição é medida com precisão de frações de centavo. O custo máximo é reservado antecipadamente e liquidado pelo uso real, então o saldo nunca fica negativo." },
         { kicker: "Controle", title: "Limites por API key", body: "Limites de taxa, tetos de gasto, datas de expiração e modelos permitidos por key mantêm cada projeto e cada pessoa do time sob controle." },
       ],
     },
@@ -77,11 +77,11 @@ export const pt: Messages = {
       eyebrow: "Perguntas frequentes",
       title: "Perguntas frequentes.",
       items: [
-        { q: "Quais modelos posso usar?", a: "A lista atualizada, com recursos, tamanho de contexto e preços, está na página de Modelos. Cada modelo TokenAPI é servido por um provedor líder; podemos trocar o backend por trás de um ID para manter a qualidade e a disponibilidade. Pergunte a qualquer modelo em qual modelo ele roda e ele vai responder." },
+        { q: "Quais modelos posso usar?", a: "A lista atualizada, com recursos, tamanho de contexto e preços, está na página de Modelos. Cada modelo TokenAPI é servido por um provedor de modelos líder; podemos trocar o backend de um ID de modelo para manter a qualidade e a disponibilidade. Para confirmar qual backend atendeu uma requisição específica, fale com o suporte informando o ID da requisição (cabeçalho de resposta x-request-id)." },
         { q: "Preciso mudar meu código?", a: "Só a base URL e a API key. Requisições e respostas seguem os formatos Chat Completions e Responses da OpenAI e o formato Messages da Anthropic." },
         { q: "E se um provedor ficar fora do ar?", a: "Os modelos podem ter várias rotas de backend. Se a principal falhar antes de começar a responder, a próxima é tentada automaticamente e você recebe uma resposta normal." },
         { q: "Como sou cobrado?", a: "Saldo pré-pago e preços por token para cada modelo. Antes de uma requisição rodar, reservamos o custo máximo possível; depois cobramos os tokens reais e liberamos o restante na hora." },
-        { q: "Vocês guardam meus prompts?", a: "Não. Registramos os metadados necessários para cobrança e suporte (modelo, tokens, custo, latência, status), não o conteúdo de prompts nem de respostas. As requisições são processadas pelo provedor que serve o modelo." },
+        { q: "Vocês guardam meus prompts?", a: "Não. Registramos os metadados das requisições necessários para cobrança e suporte (modelo, contagem de tokens, custo, latência, status), não o conteúdo de prompts ou respostas. As requisições são processadas pelo provedor que serve o modelo, de acordo com a política de dados dele, o que pode incluir retenção temporária para monitoramento de abusos. Se você precisa de condições específicas de retenção de dados, fale com a gente." },
         { q: "Como consigo uma API key?", a: "Durante o acesso antecipado, cadastramos os clientes manualmente. Escreva para {email} e vamos preparar sua conta, seu saldo e suas keys." },
       ],
     },

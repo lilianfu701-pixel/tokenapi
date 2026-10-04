@@ -20,7 +20,7 @@ const GATEWAY_CORS_HEADERS = {
 const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
 
 function cors(request: NextRequest) {
-  const headers = request.nextUrl.pathname.startsWith("/v1/") ? GATEWAY_CORS_HEADERS : CORS_HEADERS;
+  const headers = GATEWAY_CORS_HEADERS;
   if (request.method === "OPTIONS") return new NextResponse(null, { status: 204, headers });
   const response = NextResponse.next();
   for (const [key, value] of Object.entries(headers)) response.headers.set(key, value);
@@ -59,9 +59,19 @@ function language(request: NextRequest) {
   return response;
 }
 
+/**
+ * /api/v1/* belonged to earlier versions of this site (a crypto token data API, then a model
+ * pricing API, both retired) and is still in search indexes. 410 tells crawlers it is gone
+ * for good, not temporarily missing. The gateway lives at /v1/*.
+ */
+function gone() {
+  return new NextResponse(null, { status: 410, headers: { "x-robots-tag": "noindex" } });
+}
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  if (pathname.startsWith("/api/v1/") || pathname.startsWith("/v1/")) return cors(request);
+  if (pathname.startsWith("/api/v1/")) return gone();
+  if (pathname.startsWith("/v1/")) return cors(request);
   return language(request);
 }
 

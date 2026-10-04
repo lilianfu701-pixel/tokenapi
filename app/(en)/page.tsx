@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { HomePage } from "./_site/home-page";
-import { alternates } from "./_site/i18n";
-import { getMessages } from "./_site/locales";
+import { HomePage } from "@/app/_site/home-page";
+import { alternates } from "@/app/_site/i18n";
+import { getMessages } from "@/app/_site/locales";
 
 export const metadata: Metadata = { ...getMessages("en").home.meta, alternates: alternates("en", "/") };
 

@@ -2143,3 +2143,16 @@ h2 {
     position: static;
   }
 }
+
+/* ===================================================== 404 */
+.not-found {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+  padding-block: clamp(48px, 10vw, 120px);
+}
+
+.not-found h1 {
+  font-size: clamp(2.2rem, 1.4rem + 4vw, 4rem);
+  line-height: 1.02;
+}

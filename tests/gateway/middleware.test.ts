@@ -89,3 +89,11 @@ describe("API routes keep their CORS behaviour", () => {
     expect(res.headers.get("access-control-allow-origin")).toBe("*");
   });
 });
+
+describe("retired URLs", () => {
+  it.each(["/api/v1/models", "/api/v1/search?q=btc", "/api/v1/providers/1"])("%s is 410 Gone", (path) => {
+    const res = middleware(req(path));
+    expect(res.status).toBe(410);
+    expect(res.headers.get("x-robots-tag")).toBe("noindex");
+  });
+});

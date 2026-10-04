@@ -9,7 +9,7 @@ export const LOCALES = [
   { code: "es", html: "es", label: "Español" },
   { code: "fr", html: "fr", label: "Français" },
   { code: "de", html: "de", label: "Deutsch" },
-  { code: "pt", html: "pt", label: "Português" },
+  { code: "pt", html: "pt-BR", label: "Português (Brasil)" },
   { code: "ru", html: "ru", label: "Русский" },
 ] as const;
 

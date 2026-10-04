@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { LegalDocPage, legalMetadata } from "../_site/legal/legal-page";
+import { LegalDocPage, legalMetadata } from "@/app/_site/legal/legal-page";
 
 const LOCALE = "en" as const;
 
