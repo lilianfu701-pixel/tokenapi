@@ -1,29 +1,24 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { DEFAULT_LOCALE, LANG_COOKIE, type Locale, isLocale, localePath, matchAcceptLanguage } from "./lib/i18n/locales";
-
-const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Sync-Secret",
-  "Access-Control-Max-Age": "86400",
-};
+import { isKnownPath } from "./lib/site-routes";
 
 // Gateway (/v1/*): SDKs send many custom headers (x-stainless-*, anthropic-version, x-api-key...).
 // Bearer keys are not cookies, so a wildcard is safe here.
 const GATEWAY_CORS_HEADERS = {
-  ...CORS_HEADERS,
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Access-Control-Allow-Headers": "*",
   "Access-Control-Expose-Headers": "x-request-id",
+  "Access-Control-Max-Age": "86400",
 };
 
 const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
 
 function cors(request: NextRequest) {
-  const headers = GATEWAY_CORS_HEADERS;
-  if (request.method === "OPTIONS") return new NextResponse(null, { status: 204, headers });
+  if (request.method === "OPTIONS") return new NextResponse(null, { status: 204, headers: GATEWAY_CORS_HEADERS });
   const response = NextResponse.next();
-  for (const [key, value] of Object.entries(headers)) response.headers.set(key, value);
+  for (const [key, value] of Object.entries(GATEWAY_CORS_HEADERS)) response.headers.set(key, value);
   return response;
 }
 
@@ -60,26 +55,24 @@ function language(request: NextRequest) {
 }
 
 /**
- * /api/v1/* belonged to earlier versions of this site (a crypto token data API, then a model
- * pricing API, both retired) and is still in search indexes. 410 tells crawlers it is gone
- * for good, not temporarily missing. The gateway lives at /v1/*.
+ * Any URL outside the site's page set (old indexed pages, typos, retired endpoints such as
+ * the former /api/v1 data API) gets a permanent redirect to the home page, which then
+ * forwards the visitor to their language. Query strings are dropped.
  */
-function gone() {
-  return new NextResponse(null, { status: 410, headers: { "x-robots-tag": "noindex" } });
+function toHome(request: NextRequest) {
+  return NextResponse.redirect(new URL("/", request.nextUrl), 301);
 }
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  if (pathname.startsWith("/api/v1/")) return gone();
-  if (pathname.startsWith("/v1/")) return cors(request);
+  if (pathname === "/v1" || pathname.startsWith("/v1/")) return cors(request);
+  if (!isKnownPath(pathname)) return toHome(request);
+  // Admin panel and root files (sitemap, robots, favicon) skip language handling.
+  if (pathname.startsWith("/admin") || pathname.includes(".")) return NextResponse.next();
   return language(request);
 }
 
 export const config = {
-  matcher: [
-    "/api/v1/:path*",
-    "/v1/:path*",
-    // Site pages: everything except Next internals, API/admin routes and static files.
-    "/((?!_next/|api/|v1/|admin|favicon|.*\\.[a-zA-Z0-9]+$).*)",
-  ],
+  // Everything except Next's own build output and Vercel's internal endpoints.
+  matcher: ["/((?!_next/|_vercel/).*)"],
 };
