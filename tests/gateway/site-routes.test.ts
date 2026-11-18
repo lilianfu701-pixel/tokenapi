@@ -36,7 +36,7 @@ describe("known site routes", () => {
 });
 
 describe("unknown URLs go to the home page", () => {
-  it.each(["/nope", "/api/v1/models?q=btc", "/zh/nope", "/old/page.html"])("%s -> 301 /", (path) => {
+  it.each(["/nope", "/zh/nope", "/old/page.html"])("%s -> 301 /", (path) => {
     const res = middleware(req(path));
     expect(res.status).toBe(301);
     expect(new URL(res.headers.get("location")!).pathname).toBe("/");
@@ -47,8 +47,11 @@ describe("unknown URLs go to the home page", () => {
     expect(middleware(req("/robots.txt")).headers.get("location")).toBeNull();
   });
 
-  it("unknown gateway paths are left to the JSON 404 route", () => {
-    const res = middleware(req("/v1/embeddings"));
-    expect(res.headers.get("location")).toBeNull();
+  it("retired API paths are 410, not sent home", () => {
+    for (const path of ["/api/v1/models?q=btc", "/v1/embeddings"]) {
+      const res = middleware(req(path));
+      expect(res.status, path).toBe(410);
+      expect(res.headers.get("location"), path).toBeNull();
+    }
   });
 });

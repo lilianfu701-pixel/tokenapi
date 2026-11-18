@@ -3,6 +3,9 @@ import type { NextRequest } from "next/server";
 import { DEFAULT_LOCALE, LANG_COOKIE, type Locale, isLocale, localePath, matchAcceptLanguage } from "./lib/i18n/locales";
 import { isKnownPath } from "./lib/site-routes";
 
+// Stay on `middleware.ts` (Edge). Next.js 16 `proxy.ts` runs on Node and would bill Fluid
+// Active CPU on every request, including static pages.
+
 // Gateway (/v1/*): SDKs send many custom headers (x-stainless-*, anthropic-version, x-api-key...).
 // Bearer keys are not cookies, so a wildcard is safe here.
 const GATEWAY_CORS_HEADERS = {
@@ -13,13 +16,34 @@ const GATEWAY_CORS_HEADERS = {
   "Access-Control-Max-Age": "86400",
 };
 
+const GONE_BODY = JSON.stringify({
+  error: {
+    message: "This endpoint is disabled.",
+    type: "invalid_request_error",
+    code: "gone",
+    param: null,
+  },
+});
+
 const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
 
-function cors(request: NextRequest) {
-  if (request.method === "OPTIONS") return new NextResponse(null, { status: 204, headers: GATEWAY_CORS_HEADERS });
-  const response = NextResponse.next();
-  for (const [key, value] of Object.entries(GATEWAY_CORS_HEADERS)) response.headers.set(key, value);
-  return response;
+function gone() {
+  return new NextResponse(GONE_BODY, {
+    status: 410,
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "public, max-age=86400",
+      ...GATEWAY_CORS_HEADERS,
+    },
+  });
+}
+
+function normalizePath(pathname: string) {
+  return pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname;
+}
+
+function hasPrefix(pathname: string, prefix: string) {
+  return pathname === prefix || pathname.startsWith(`${prefix}/`);
 }
 
 /**
@@ -55,20 +79,38 @@ function language(request: NextRequest) {
 }
 
 /**
- * Any URL outside the site's page set (old indexed pages, typos, retired endpoints such as
- * the former /api/v1 data API) gets a permanent redirect to the home page, which then
- * forwards the visitor to their language. Query strings are dropped.
+ * Any URL outside the site's page set (old indexed pages, typos) gets a permanent redirect
+ * to the home page, which then forwards the visitor to their language. Query strings are dropped.
  */
 function toHome(request: NextRequest) {
   return NextResponse.redirect(new URL("/", request.nextUrl), 301);
 }
 
+/**
+ * Admin no longer reads the session or the database. GET/HEAD render the static login page.
+ * Anything else (server actions, form posts) is rejected here so no Node function starts.
+ */
+function admin(request: NextRequest) {
+  if (request.method !== "GET" && request.method !== "HEAD") return gone();
+  const pathname = normalizePath(request.nextUrl.pathname);
+  if (pathname === "/admin/login") return NextResponse.next();
+  const url = request.nextUrl.clone();
+  url.pathname = "/admin/login";
+  return NextResponse.rewrite(url);
+}
+
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  if (pathname === "/v1" || pathname.startsWith("/v1/")) return cors(request);
-  if (!isKnownPath(pathname)) return toHome(request);
-  // Admin panel and root files (sitemap, robots, favicon) skip language handling.
-  if (pathname.startsWith("/admin") || pathname.includes(".")) return NextResponse.next();
+  // Server actions are POSTs that would boot a Node function on whatever URL they hit.
+  if (request.headers.has("next-action")) return gone();
+
+  const pathname = normalizePath(request.nextUrl.pathname);
+  // Retired gateway and data APIs: answer on the edge. No route handler is deployed.
+  if (hasPrefix(pathname, "/v1") || hasPrefix(pathname, "/api")) return gone();
+  if (hasPrefix(pathname, "/admin")) return admin(request);
+
+  if (!isKnownPath(request.nextUrl.pathname)) return toHome(request);
+  // Root files (sitemap, robots, favicon) skip language handling.
+  if (pathname.includes(".")) return NextResponse.next();
   return language(request);
 }
 

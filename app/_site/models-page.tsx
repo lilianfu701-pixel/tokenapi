@@ -1,24 +1,13 @@
-import { toPublicModel } from "@/lib/gateway/models";
-import { createNeonRepo } from "@/lib/gateway/repo";
 import { API_BASE, type Locale, htmlLang, rich } from "./i18n";
 import { fmt, getMessages } from "./locales";
 import { CATALOG_MODEL_COUNT, CATALOG_VENDOR_COUNT, ModelCatalog } from "./model-catalog";
-import { ModelTable, type PublicModel } from "./model-table";
+import { ModelTable } from "./model-table";
+import { PUBLIC_MODELS } from "./public-models";
 import { SiteFooter, SiteHeader } from "./site-chrome";
 
-async function loadModels(): Promise<{ models: PublicModel[]; failed: boolean }> {
-  try {
-    const aliases = await createNeonRepo().listPublicAliases();
-    return { models: aliases.map((a) => toPublicModel(a)), failed: false };
-  } catch (e) {
-    console.error("[models page] failed to load models", e);
-    return { models: [], failed: true };
-  }
-}
-
-export async function ModelsPage({ locale }: { locale: Locale }) {
+export function ModelsPage({ locale }: { locale: Locale }) {
   const t = getMessages(locale).models;
-  const { models, failed } = await loadModels();
+  const models = PUBLIC_MODELS;
   const lead = fmt(t.lead, { models: CATALOG_MODEL_COUNT, vendors: CATALOG_VENDOR_COUNT, base: API_BASE });
   return (
     <main className="site-shell" lang={htmlLang(locale)}>
@@ -30,9 +19,7 @@ export async function ModelsPage({ locale }: { locale: Locale }) {
         <p>{rich(lead, locale)}</p>
       </section>
 
-      {failed ? (
-        <p className="notice notice-error" role="alert">{t.unavailable}</p>
-      ) : models.length > 0 ? (
+      {models.length > 0 ? (
         <section className="own-models" aria-labelledby="own-title">
           <div className="catalog-intro">
             <h2 id="own-title">{t.ownTitle}</h2>

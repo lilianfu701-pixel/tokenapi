@@ -4,7 +4,7 @@ import { getMessages } from "../../_site/locales";
 import { ModelsPage } from "../../_site/models-page";
 import { type LangParams, localeStaticParams, resolveLocale } from "../locale-params";
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
 export const dynamicParams = false;
 export const generateStaticParams = localeStaticParams;
 

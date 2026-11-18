@@ -1,16 +1,14 @@
+import { NextRequest } from "next/server";
 import { describe, expect, it } from "vitest";
-import * as route from "@/app/v1/[...path]/route";
+import { middleware } from "@/middleware";
 
-const call = (method: keyof typeof route, path: string) =>
-  (route[method] as (req: Request) => Response)(new Request(`https://tokenapi.biz${path}`, { method }));
-
-describe("unknown /v1 paths", () => {
-  it.each(["GET", "POST", "PUT", "PATCH", "DELETE"] as const)("%s returns an OpenAI-style JSON 404", async (method) => {
-    const res = call(method, "/v1/embeddings");
-    expect(res.status).toBe(404);
+describe("retired /v1 paths", () => {
+  it.each(["GET", "POST", "PUT", "PATCH", "DELETE"] as const)("%s returns JSON 410", async (method) => {
+    const res = middleware(new NextRequest("https://tokenapi.biz/v1/embeddings", { method }));
+    expect(res.status).toBe(410);
     expect(res.headers.get("content-type")).toContain("application/json");
     const body = await res.json();
-    expect(body.error.code).toBe("unknown_endpoint");
-    expect(body.error.message).toContain("/v1/embeddings");
+    expect(body.error.code).toBe("gone");
+    expect(body.error.message).toContain("disabled");
   });
 });
