@@ -1,8 +1,7 @@
+// Preserved admin chrome. Not a Next.js layout: nothing under this folder is a route.
 import Link from "next/link";
 import { logoutAction } from "@/lib/admin/actions";
 import { requireAdmin } from "@/lib/admin/auth";
-
-export const dynamic = "force-dynamic";
 
 const NAV = [
   { href: "/admin", label: "Overview" },

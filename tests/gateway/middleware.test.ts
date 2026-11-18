@@ -76,16 +76,46 @@ describe("explicit language choice (?lang=)", () => {
   });
 });
 
-describe("API routes keep their CORS behaviour", () => {
-  it("gateway preflight", () => {
+describe("retired backend routes answer on the edge", () => {
+  it("gateway preflight is a cheap 410", () => {
     const res = middleware(req("/v1/chat/completions", {}, "OPTIONS"));
-    expect(res.status).toBe(204);
+    expect(res.status).toBe(410);
     expect(res.headers.get("access-control-allow-headers")).toBe("*");
+    expect(res.headers.get("access-control-allow-origin")).toBe("*");
+    expect(res.headers.get("location")).toBeNull();
   });
 
   it("API calls are never language-redirected", () => {
     const res = middleware(req("/v1/models?lang=ja", { "accept-language": "ja" }));
+    expect(res.status).toBe(410);
     expect(res.headers.get("location")).toBeNull();
     expect(res.headers.get("access-control-allow-origin")).toBe("*");
+  });
+
+  it.each(["/v1", "/v1/messages", "/api", "/api/sync", "/api/v1/models"])("%s is gone", (path) => {
+    const res = middleware(req(path, { "accept-language": "zh-CN" }, "POST"));
+    expect(res.status).toBe(410);
+    expect(res.headers.get("location")).toBeNull();
+  });
+
+  it("server actions are rejected before a function can run", async () => {
+    const res = middleware(req("/docs", { "next-action": "abc" }, "POST"));
+    expect(res.status).toBe(410);
+    expect((await res.json()).error.code).toBe("gone");
+  });
+
+  it("admin GET is the static login page; other methods are gone", () => {
+    const login = middleware(req("/admin/login"));
+    expect(login.status).toBe(200);
+    expect(login.headers.get("location")).toBeNull();
+    expect(login.headers.get("x-middleware-rewrite")).toBeNull();
+
+    const panel = middleware(req("/admin/logs", { "accept-language": "ja" }));
+    expect(panel.status).toBe(200);
+    expect(panel.headers.get("location")).toBeNull();
+    expect(panel.headers.get("x-middleware-rewrite")).toContain("/admin/login");
+
+    const post = middleware(req("/admin/login", {}, "POST"));
+    expect(post.status).toBe(410);
   });
 });

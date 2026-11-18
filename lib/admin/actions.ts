@@ -15,6 +15,11 @@ import { assertAdminLoginIsAllowed, getLoginAttemptIdentifier, recordFailedAdmin
 
 const VENDORS = ["anthropic", "openai", "google", "alibaba", "deepseek", "moonshot", "other"];
 
+/** Display-only deployment: admin mutations must not run or touch the database. */
+function disabled(): void {
+  if (process.env.ADMIN_ENABLED !== "1") throw new Error("Admin is disabled.");
+}
+
 type Sql = ReturnType<typeof getDb>;
 
 function dbMessage(e: unknown) {
@@ -27,6 +32,7 @@ function dbMessage(e: unknown) {
 
 /** Auth -> validate -> mutate -> redirect back with ?ok / ?error. */
 async function run(path: string, fn: (sql: Sql, actor: string) => Promise<string | void>) {
+  disabled();
   const actor = await requireAdmin();
   let message: string;
   try {
@@ -47,6 +53,7 @@ async function audit(sql: Sql, actor: string, action: string, entity: string, en
 // ---------------------------------------------------------------- session
 
 export async function loginAction(form: FormData) {
+  disabled();
   const id = getLoginAttemptIdentifier(await headers());
   if (!(await assertAdminLoginIsAllowed(id))) redirect("/admin/login?error=locked");
   if (!checkAdminPassword(str(form, "password", { max: 200 }))) {
@@ -59,6 +66,7 @@ export async function loginAction(form: FormData) {
 }
 
 export async function logoutAction() {
+  disabled();
   await endAdminSession();
   redirect("/admin/login");
 }
@@ -386,6 +394,7 @@ export interface CreateKeyState {
 
 /** Used with useActionState so the plaintext key is shown exactly once and never stored or put in a URL. */
 export async function createApiKey(_prev: CreateKeyState, form: FormData): Promise<CreateKeyState> {
+  disabled();
   await requireAdmin();
   try {
     const sql = getDb();

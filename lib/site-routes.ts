@@ -10,7 +10,7 @@ export const SITE_PAGES = ["/", "/models", "/docs", "/terms", "/privacy", "/acce
 /** Files served at the root (metadata routes and public/). */
 const ROOT_FILES = new Set(["/sitemap.xml", "/robots.txt", "/favicon.svg"]);
 
-/** Whole subtrees owned by their own handlers: admin panel, gateway (JSON 404s), Next/Vercel internals. */
+/** Subtrees that are not marketing pages: admin (static login), retired gateway, Next/Vercel internals. */
 const OWNED_PREFIXES = ["/admin", "/v1", "/_next", "/_vercel"];
 
 const PAGES = new Set<string>(SITE_PAGES);
